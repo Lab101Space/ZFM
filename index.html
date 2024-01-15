@@ -175,6 +175,7 @@
     var nN = 0;
     var done = false;
     var selectedTruss = 'truss1';
+    var Nsteps;
 
     var array1 = [];
     var array2 = [];
@@ -184,6 +185,10 @@
     var nodeCount = memberCount = supportCount = 0;
     var Ksys = [];
     var dof = [];
+
+    var stepDesc = [];
+    var linkDesc = [];
+    var ruleDesc = [];
         
     for(let i=0; i<=20; i++){
             array1.push([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
@@ -582,7 +587,6 @@
             desc += '<option value="truss14" '+s14+'>Truss 14</option>'; 
             desc += '<option value="truss15" '+s15+'>Truss 15</option>';                                                                                                        
         desc += '</select></center>';
-        desc += '<p>For further details, please consult <a href = "ZFMguide.pdf" target="_blank">the user\'s guide available for download in PDF format</a>.</p>'
 
         document.getElementById('submit').style.display = 'block';
         document.getElementById('reset').style.display = 'none';
@@ -719,7 +723,7 @@
     const c = document.getElementById("canvas");
     const ctx = c.getContext("2d");
 
-    document.getElementById('link'+previousStep).style.visibility = 'hidden';
+  //
 
     if (nextI < Nsteps){
         NodeColor[Step[nextI][1]] ='yellow';  
@@ -888,7 +892,8 @@
         var mem = W[0];
         showMemberNumber(mem);
     }
-    if(nextStep <= Nsteps) document.getElementById('step'+nextStep).style.display = 'block'; 
+    
+    writeSteps(nextStep); 
  }
 
 function decode(){
@@ -1014,6 +1019,27 @@ function encode(){
 decode();
 encode();
 
+function writeSteps(currentStep){
+    var ms = 'step';
+    if (Nsteps > 1) ms = 'steps';  
+    document.getElementById("result").innerHTML = 'We can identify the zero-force members in the truss in <b>'+Nsteps +' '+ms+'</b>.'; 
+
+    if (currentStep <= Nsteps){
+        console.log('writing step '+currentStep);
+
+        for (var i = 1; i <= currentStep; i++){
+            document.getElementById('result').innerHTML += '<p><b>Step '+i+'</b> '+stepDesc[i]+'</p>';
+        }
+
+        if (currentStep <= Nsteps) document.getElementById('result').innerHTML += '<center><a>'+linkDesc[currentStep]+'</a></center>';
+    }
+    else{
+        
+        for (var i = 1; i <= Nsteps; i++){
+            document.getElementById('result').innerHTML += '<p><b>Step '+i+'</b> '+stepDesc[i]+'</p>';
+        }
+    }
+}
 
 function process(R){
 
@@ -1028,10 +1054,7 @@ function process(R){
    
     if (Nsteps > 0 && !R[1].includes("Y/0")){
 
-        var ms = 'step';
-        if (Nsteps > 1) ms = 'steps';
 
-        document.getElementById("result").innerHTML = 'We can identify the zero-force members in the truss in <b>'+Nsteps +' '+ms+'</b>.';
         for(var index = 2; index < Nsteps+2; index++){
             var token = R[index];
             var Lindex = token.indexOf('L/');
@@ -1065,39 +1088,39 @@ function process(R){
 
              var ii = index - 1;
              var nexti = ii + 1;
-            
-            if (ii == Nsteps){
-                if (Rule==1) document.getElementById("result").innerHTML += '<div style="display:none;" id="step'+ii+'"><p><b>Step '+ii+ '</b> (Rule 1): There are no loads or supports at Node '+N+'. Since the node connects only two (non-collinear) members, they carry no force.<br><center><a id =link'+ii+' href="#" onClick="showStep('+nexti+'); ">Remove the zero-force members.</a></center></p></div>';
-                if (Rule==2) document.getElementById("result").innerHTML += '<div style="display:none;" id="step'+ii+'"><p><b>Step '+ii+ '</b> (Rule 2): There are no loads or supports at Node '+N+'. Since the node connects three members, two of which are collinear, the other member carries no force.<br><center><a id =link'+ii+' href="#" onClick="showStep('+nexti+');">Remove the zero-force member.</a></center></p></div>';  
-                if (Rule==3) document.getElementById("result").innerHTML += '<div style="display:none;" id="step'+ii+'"><p><b>Step '+ii+ '</b> (Rule3): Node '+N+' is connected to one member only. Since there is no support and load at the node, the member carries no force.<br><center><a id =link'+ii+' href="#" onClick="showStep('+nexti+');">Remove the zero-force member.</a></center></p></div>';  
-                if (Rule==4) document.getElementById("result").innerHTML += '<div style="display:none;" id="step'+ii+'"><p><b>Step '+ii+ '</b> (Rule 4): Member '+L+' is located between two pin supports, therefore, no force can be transmitted to it.<br><center><a id =link'+ii+' href="#" onClick="showStep('+nexti+');">Remove the zero-force member.</a></center></p></div>';  
-                if (Rule==5) document.getElementById("result").innerHTML += '<div style="display:none;" id="step'+ii+'"><p><b>Step '+ii+ '</b> (Rule 5): Only one member is connected to Node '+N+'. The roller at the node takes the entire vertical load; the member carries no portion of the load. <br><center><a id =link'+ii+' href="#" onClick="showStep('+nexti+');">Remove the zero-force member.</a></center></p></div>'; 
-                if (Rule==6) document.getElementById("result").innerHTML += '<div style="display:none;" id="step'+ii+'"><p><b>Step '+ii+ '</b> (Rule 6): Only one member is connected to Node '+N+'. Since there is a roller but no load at the node, the member carries no force. <br><center><a id =link'+ii+' href="#" onClick="showStep('+nexti+');">Remove the zero-force member.</a></center></p></div>'; 
-                if (Rule==7) document.getElementById("result").innerHTML += '<div style="display:none;" id="step'+ii+'"><p><b>Step '+ii+ '</b> (Rule 7): Only one member is connected to Node '+N+'. Since there is a roller support at the node and the applied load is not in the direction of the member, the member carries no force. <br><center><a id =link'+ii+' href="#" onClick="showStep('+nexti+');">Remove the zero-force member.</a></center></p></div>'; 
-                if (Rule==8) document.getElementById("result").innerHTML += '<div style="display:none;" id="step'+ii+'"><p><b>Step '+ii+ '</b> (Rule 8): Only one member is connected to Node '+N+'. Since there is a roller support but no load at the node, the member carries no force. <br><center><a id =link'+ii+' href="#" onClick="showStep('+nexti+');">Remove the zero-force member.</a></center></p></div>'; 
-                if (Rule==9) document.getElementById("result").innerHTML += '<div style="display:none;" id="step'+ii+'"><p><b>Step '+ii+ '</b> (Rule 9): At Node '+N+', the horizontal roller supports two connected members - a horizontal one and a vertical one. Since there are no horizontal loads acting at the node, the horizontal member carries no axial force. <br><center><a id =link'+ii+' href="#" onClick="showStep('+nexti+');">Remove the zero-force member.</a></center></p></div>'; 
-                if (Rule==10) document.getElementById("result").innerHTML += '<div style="display:none;" id="step'+ii+'"><p><b>Step '+ii+ '</b> (Rule 10): At Node '+N+', the vertical roller supports two connected members - a horizontal one and a vertical one. Since there are no vertical loads acting at the node, the vertical member carries no axial force. <br><center><a id =link'+ii+' href="#" onClick="showStep('+nexti+');">Remove the zero-force member.</a></center></p></div>'; 
-                if (Rule==11) document.getElementById("result").innerHTML += '<div style="display:none;" id="step'+ii+'"><p><b>Step '+ii+ '</b> (Rule 11): There is a horizontal load at Node '+N+'. The node connects two members one of which is also horizontal. Since there are no other loads or support at the node, the non-horizontal member carries no axial force. <br><center><a id =link'+ii+' href="#" onClick="showStep('+nexti+');">Remove the zero-force member.</a></center></p></div>'; 
-                if (Rule==12) document.getElementById("result").innerHTML += '<div style="display:none;" id="step'+ii+'"><p><b>Step '+ii+ '</b> (Rule 12): There is a vertical load at Node '+N+'. The node connects two members one of which is also vertical. Since there are no other loads or support at the node, the non-vertical member carries no axial force. <br><center><a id =link'+ii+' href="#" onClick="showStep('+nexti+');">Remove the zero-force member.</a></center></p></div>'; 
- 
-            }
-            else{
-                if (Rule==1) document.getElementById("result").innerHTML += '<div style="display:none;" id="step'+ii+'"><p><b>Step '+ii+ '</b> (Rule 1): There are no loads or supports at Node '+N+'. Since the node connects only two (non-collinear) members, they carry no force.<br><center><a id =link'+ii+' href="#" onClick="showStep('+nexti+');">Remove the zero-force members and go to the next step.</a></center></p></div>';
-                if (Rule==2) document.getElementById("result").innerHTML += '<div style="display:none;" id="step'+ii+'"><p><b>Step '+ii+ '</b> (Rule 2): There are no loads or supports at Node '+N+'. Since the node connects three members, two of which are collinear, the other member carries no force.<br><center><a id =link'+ii+' href="#" onClick="showStep('+nexti+');">Remove the zero-force member and go to the next step</a></center></p></div>';
-                if (Rule==3) document.getElementById("result").innerHTML += '<div style="display:none;" id="step'+ii+'"><p><b>Step '+ii+ '</b> (Rule 3): Node '+N+' is connected to one member only. Since there is no support and load at the node, the member carries no force.<br><center><a id =link'+ii+' href="#" onClick="showStep('+nexti+');">Remove the zero-force member and go to the next step</a></center></p></div>'; 
-                if (Rule==4) document.getElementById("result").innerHTML += '<div style="display:none;" id="step'+ii+'"><p><b>Step '+ii+ '</b> (rule 4): Member '+L+' is located between two pin supports, therefore, no force can be transmitted to it.<br><center><a id =link'+ii+' href="#" onClick="showStep('+nexti+');">Remove the zero-force member and go to the next step</a></center></p></div>';
-                if (Rule==5) document.getElementById("result").innerHTML += '<div style="display:none;" id="step'+ii+'"><p><b>Step '+ii+ '</b> (Rule 5): Only one member is connected to Node '+N+'. The roller at the node takes the entire vertical load; the member carries no portion of the load. <br><center><a id =link'+ii+' href="#" onClick="showStep('+nexti+');">Remove the zero-force member and go to the next step</a></center></p></div>';
-                if (Rule==6) document.getElementById("result").innerHTML += '<div style="display:none;" id="step'+ii+'"><p><b>Step '+ii+ '</b> (Rule 6): Only one member is connected to Node '+N+'. Since there is a roller but no load at the node, the member carries no force.  <br><center><a id =link'+ii+' href="#" onClick="showStep('+nexti+');">Remove the zero-force member and go to the next step</a></center></p></div>'; 
-                if (Rule==7) document.getElementById("result").innerHTML += '<div style="display:none;" id="step'+ii+'"><p><b>Step '+ii+ '</b> (Rule 7): Only one member is connected to Node '+N+'. Since there is a roller support at the node and the applied load in not the direction of the member, the member carries no force.  <br><center><a id =link'+ii+' href="#" onClick="showStep('+nexti+');">Remove the zero-force member and go to the next step</a></center></p></div>'; 
-                if (Rule==8) document.getElementById("result").innerHTML += '<div style="display:none;" id="step'+ii+'"><p><b>Step '+ii+ '</b> (Rule 8): Only one member is connected to Node '+N+'. Since there is a roller support but no load at the node, the member carries no force.  <br><center><a id =link'+ii+' href="#" onClick="showStep('+nexti+');">Remove the zero-force member and go to the next step</a></center></p></div>'; 
-                if (Rule==9) document.getElementById("result").innerHTML += '<div style="display:none;" id="step'+ii+'"><p><b>Step '+ii+ '</b> (Rule 9): At Node '+N+', the horizontal roller supports two connected members - a horizontal one and a vertical one. Since there are no horizontal loads acting at the node, the horizontal member carries no axial force.  <br><center><a id =link'+ii+' href="#" onClick="showStep('+nexti+');">Remove the zero-force member and go to the next step</a></center></p></div>'; 
-                if (Rule==10) document.getElementById("result").innerHTML += '<div style="display:none;" id="step'+ii+'"><p><b>Step '+ii+ '</b> (Rule 10): At Node '+N+', the vertical roller supports two connected members - a horizontal one and a vertical one. Since there are no vertical loads acting at the node, the vertical member carries no axial force.  <br><center><a id =link'+ii+' href="#" onClick="showStep('+nexti+');">Remove the zero-force member and go to the next step</a></center></p></div>'; 
-                if (Rule==11) document.getElementById("result").innerHTML += '<div style="display:none;" id="step'+ii+'"><p><b>Step '+ii+ '</b> (Rule 11): There is a horizontal load at Node '+N+'. The node connects two members one of which is also horizontal. Since there are no other loads or support at the node, the non-horizontal member carries no axial force. <br><center><a id =link'+ii+' href="#" onClick="showStep('+nexti+');">Remove the zero-force member and go to the next step</a></center></p></div>'; 
-                if (Rule==12) document.getElementById("result").innerHTML += '<div style="display:none;" id="step'+ii+'"><p><b>Step '+ii+ '</b> (Rule 12): There is a vertical load at Node '+N+'. The node connects two members one of which is also vertical. Since there are no other loads or support at the node, the non-vertical member carries no axial force. <br><center><a id =link'+ii+' href="#" onClick="showStep('+nexti+');">Remove the zero-force member and go to the next step</a></center></p></div>'; 
- 
-            }
+                     
+                if (Rule==1) {
+                    stepDesc[ii] = '(Rule 1): There are no loads or supports at Node '+N+'. Since the node connects only two (non-collinear) members, they carry no force.';}     
+                else if (Rule==2) {
+                    stepDesc[ii] =  '(Rule 2): There are no loads or supports at Node '+N+'. Since the node connects three members, two of which are collinear, the other member carries no force.';}
+                else if (Rule==3) {
+                    stepDesc[ii] = '(Rule3): Node '+N+' is connected to one member only. Since there is no support and load at the node, the member carries no force.';}
+                else if (Rule==4) {
+                    stepDesc[ii] = '(Rule 4): Member '+L+' is located between two pin supports, therefore, no force can be transmitted to it.';}
+                else if (Rule==5) {
+                    stepDesc[ii] = '(Rule 5): Only one member is connected to Node '+N+'. The roller at the node takes the entire vertical load; the member carries no portion of the load.';}
+                else if (Rule==6) {
+                    stepDesc[ii] = '(Rule 6): Only one member is connected to Node '+N+'. Since there is a roller but no load at the node, the member carries no force.';}
+               else if (Rule==7) {
+                    stepDesc[ii] = '(Rule 7): Only one member is connected to Node '+N+'. Since there is a roller support at the node and the applied load is not in the direction of the member, the member carries no force.';}
+                else if (Rule==8) {
+                    stepDesc[ii] = '(Rule 8): Only one member is connected to Node '+N+'. Since there is a roller support but no load at the node, the member carries no force.';}
+                else if (Rule==9) {
+                    stepDesc[ii] = '(Rule 9): At Node '+N+', the horizontal roller supports two connected members - a horizontal one and a vertical one. Since there are no horizontal loads acting at the node, the horizontal member carries no axial force.';}
+                else if (Rule==10) {
+                    stepDesc[ii] = '(Rule 10): At Node '+N+', the vertical roller supports two connected members - a horizontal one and a vertical one. Since there are no vertical loads acting at the node, the vertical member carries no axial force.';}
+                else if (Rule==11) {
+                    stepDesc[ii] = '(Rule 11): There is a horizontal load at Node '+N+'. The node connects two members one of which is also horizontal. Since there are no other loads or support at the node, the non-horizontal member carries no axial force.';}            
+                else if (Rule==12) {
+                    stepDesc[ii] = '(Rule 12): There is a vertical load at Node '+N+'. The node connects two members one of which is also vertical. Since there are no other loads or support at the node, the non-vertical member carries no axial force.';} 
+
+                    linkDesc[ii] = '<br><center><a id =link'+ii+' href="#" onClick="showStep('+nexti+');">Remove the zero-force member.</a></center></p>';
+                if (ii != Nsteps){ 
+                    linkDesc[ii] ='<br><center><a id =link'+ii+' href="#" onClick="showStep('+nexti+');">Remove the zero-force member and go to the Step '+nexti+'.</a></center></p>';
+                }
+                console.log('step '+ii+ 'of '+Nsteps);
         }
-        document.getElementById('step1').style.display = 'block';
+        writeSteps(1);
 
         const c = document.getElementById("canvas");
         const ctx = c.getContext("2d");

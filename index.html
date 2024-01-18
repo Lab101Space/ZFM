@@ -1352,6 +1352,7 @@ function process(R){
 
         canvas.addEventListener('pointerdown' , (e) => {
             if(!done){
+            // deleting loads, supports, and lines
                 array4.forEach( (element , index) => {
                     if(del){
                         if(element[2] == "x"){
@@ -1446,6 +1447,7 @@ function process(R){
                     }
                 
                 });
+                
                 array1.forEach( (element , index) => {
                     let index1 = index;
                     let x = (index + 1) * (600/22);
@@ -1457,11 +1459,16 @@ function process(R){
                         let yminus = y - (600/44); 
                         let line1 = Math.sqrt( Math.abs(e.offsetX - x) * Math.abs(e.offsetX - x) + Math.abs(e.offsetY - y) * Math.abs(e.offsetY - y) );
                         if(e.offsetX <= xplus && e.offsetX >= xminus && e.offsetY <= yplus && e.offsetY >= yminus){
-                            if(add && !oneOnly){ 
+
+                            // add node
+                            if(add && !oneOnly)
+                            { 
                                 array1[index][index1] = 1; 
-                            //    checkStability();
                                 oneOnly = true;
-                            }else if(del && line1 <= 7){ 
+                            }
+
+                            // delete node
+                            else if(del && line1 <= 7){ 
                                 let indexplusx = index1 + 1;
                                 let indexplusy = index + 1;
                                 array1[index][index1] = 0; 
@@ -1489,14 +1496,18 @@ function process(R){
                                     });
                                 }
                                 del11();
-                            //    checkStability();
-                            }else if(!add && !del && !member && !pin && !rollerx && !rollery && !loadx && !loady && array1[index][index1] == 1){ 
+                            }
+                            
+                            // move node
+                            else if(!add && !del && !member && !pin && !rollerx && !rollery && !loadx && !loady && array1[index][index1] == 1){ 
                                 grabx = index1;
                                 graby = index;
                                 grab = true; 
                                 let indexplusx = index1 + 1;
                                 let indexplusy = index + 1;
                                 array1[index][index1] = 0; 
+
+                                // delete and redraw member(s) at the node
                                 let del2 = function(){
                                     array2.forEach( (element , index) => {
                                         if(element[0] == indexplusx && element[1] == indexplusy || element[2] == indexplusx && element[3] == indexplusy){
@@ -1511,7 +1522,8 @@ function process(R){
                                     });
                                 }
                                 del2();
-                            //    checkStability();
+                            
+                                // delete and redraw support at the node
                                 array3.forEach( (pelement , pindex) => {
                                     if(pelement[0] == indexplusx && pelement[1] == indexplusy){
                                         if(pelement[2] == "pin"){
@@ -1522,7 +1534,6 @@ function process(R){
                                             grabrollery = true;
                                         }
                                         array3.splice(pindex, 1);
-                                 //       checkStability();
                                     }
                                 });
 
@@ -1536,7 +1547,19 @@ function process(R){
                                         array4.splice(lindex, 1);
                                     }
                                 });
-                            }else if(member && array1[index][index1] == 1){ 
+                                array4.forEach( (lelement , lindex) => {
+                                    if(lelement[0] == indexplusx && lelement[1] == indexplusy){
+                                        if(lelement[2] == "x"){
+                                            grabloadx = true;
+                                        }else if(lelement[2] == "y"){
+                                            grabloady = true;
+                                        }
+                                        array4.splice(lindex, 1);
+                                    }
+                                });                                
+                            }
+                            
+                            else if(member && array1[index][index1] == 1){ 
                                 let x2 = index1 + 1;
                                 let y2 = index + 1;
                                 if(!line.active){ 

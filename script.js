@@ -1,5 +1,13 @@
 var Truss = "[node(1,4,4),node(2,8,4),node(3,12,4),node(4,8,1),node(5,15,1),member(1,1,2),member(2,2,3),member(3,2,4),member(4,1,4),member(5,4,5),member(6,3,5),member(7,3,4),support(pin,3),support(rollerx,2),load(4,x)]";
 
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        deselectALL();
+    }
+});
+
+
+
 function extractSubstrings(str) {
     const regex = /{(.*?)}/g;
     let matches = str.match(regex);

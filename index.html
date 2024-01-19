@@ -157,7 +157,7 @@
 </style>
 
     <script>
-
+   
     var description = '';
 
     var chatGPTinstruction = "The topic is zero-force members in truss structure. The following expression contains a list enclosed in square brackets. The list consists of several members separated by commas. Each list member is a sentence. The sentences describe the conclusions of steps taken to solve a problem. Keep the description of each step brief; don't explain the rules. Please write a paragraph based on the sequence of sentences in the list. In your description, you can number the steps. Write each step in a separate paragraph. ";
@@ -194,7 +194,9 @@
             array1.push([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
         }
 
-        function setFirstOption() {
+
+
+    function setFirstOption() {
             document.getElementById('trusses').selectedIndex = 0;
         }
 
@@ -1312,11 +1314,11 @@ function process(R){
             deselectALL();
             document.getElementById(X).style.display="none";
             document.getElementById(X+"S").style.display="block"; 
-            if (X=='addnode') {add = true; document.body.style.cursor = 'crosshair';}  
+            if (X=='addnode') {add = true; document.body.style.cursor = 'copy';}  
             if (X=='addmember') {member=true; document.body.style.cursor = 'copy'; }
             if (X=='delete'){del = true; document.body.style.cursor = 'pointer';}
-            if (X=='addsupport'){ document.getElementById("supportList").style.display="block"; pin = true;}
-            if (X=='addload'){ document.getElementById("loadList").style.display="block"; loadx=true;}
+            if (X=='addsupport'){ document.getElementById("supportList").style.display="block"; pin = true; document.body.style.cursor = 'copy'; }
+            if (X=='addload'){ document.getElementById("loadList").style.display="block"; loadx=true; document.body.style.cursor = 'copy';}
         }
 
         function deselect(X){
@@ -1500,6 +1502,9 @@ function process(R){
                             
                             // move node
                             else if(!add && !del && !member && !pin && !rollerx && !rollery && !loadx && !loady && array1[index][index1] == 1){ 
+                                
+                                document.body.style.cursor = 'grabbing'; 
+
                                 grabx = index1;
                                 graby = index;
                                 grab = true; 
@@ -1672,6 +1677,9 @@ function process(R){
         });
 
         canvas.addEventListener('pointerup' , (e) => {
+
+            document.body.style.cursor = 'default'; 
+
             if(grab){
                 array1.forEach( (element , index) => {
                     let index1 = index;

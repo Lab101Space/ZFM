@@ -34,19 +34,41 @@ function hideProgressBar() {
     document.getElementById('progressBarContainer').style.display = 'none';
 }
 
+let myWorker = new Worker('webWorker.js');
 
-let myWorker = new Worker('trussWorker.js');
+// Function to initialize the worker
+function initializeWorker() {
+    return new Promise((resolve, reject) => {
+        myWorker.postMessage({ command: 'initialize'});
 
-myWorker.onmessage = function(e) {
-    console.log('Message received from worker: ', e.data);
-    process(e.data);
-  };
+        myWorker.onmessage = function(e) {
+            if (e.data.status === 'initialized') {
+                resolve();
+            }
+        };
 
-myWorker.onerror = function(e) {
-      console.error('Error in worker: ', e);
-  };
+        myWorker.onerror = function(error) {
+            reject(error);
+        };
+    });
+}
 
+// Function to process prolog using the worker
+function goProlog() {
+    return new Promise((resolve, reject) => {
+        myWorker.postMessage({ command: 'calculate', truss: Truss});
 
+        myWorker.onmessage = function(e) {
+            if (e.data.result) {
+                resolve(e.data.result);
+            }
+        };
+
+        myWorker.onerror = function(error) {
+            reject(error);
+        };
+    });
+}
 
 // Async function to run the factorial computation
 async function runFunction() {
@@ -87,15 +109,10 @@ async function runFunction() {
             timerOn = true;
             startCountdown(timerDuration);
 
-           // const Result = await goProlog();
-           // console.log(' from script result:' + Result);
+            const Result = await goProlog();
+            const out = extractSubstrings(Result);
 
-           // process(Result);
-           console.log(' message posted to worker from script ');
-            myWorker.postMessage({ TrussString: Truss});
-           // console.log(' > Result '+Result);
-
-          //  process(Result);
+            process(out);
         } catch (error) {
             console.error('Worker error:', error);
         } finally {
@@ -107,6 +124,13 @@ async function runFunction() {
     }
 
 }
+
+async function initProlog(){
+    await initializeWorker();
+    console.log('Prolog engine has been initialized');
+}
+initProlog();
+
 
 let timerOn = false;  // Flag to control the timer
 

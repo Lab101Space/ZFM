@@ -720,7 +720,7 @@
 
  
 
-    if (nextStep <= Nsteps){
+    if (nextStep <= Nsteps && Step[nextStep][0] != '4'){
         NodeColor[Step[nextStep][1]] ='yellow';  
     }
 
@@ -839,10 +839,11 @@
     ctx.closePath();
 }   
 
+  
     redrawNodes();
     redrawLoads();
     redrawSupports();
-
+ 
     if (nextStep <= Nsteps && Step[nextStep][0]=='4') {
         var memnum = Step[nextStep][2][0];
         showMemberNumber(memnum);

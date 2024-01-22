@@ -1,0 +1,1950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zero-force member app</title>
+
+    <script src="script.js"></script>
+
+    <style>
+        #container { width:600px; margin:10px auto 10px auto; position:relative;}
+        #delete { float:right; }
+        #addsupport { width:88px; }
+        #addload { width:88px; }
+        #canvas { display:block; margin:auto;}
+        button { background:#ddd; }
+        #pin { position:absolute; left:174px; width:88px; top:20px; display:none; }
+        #roller-x { position:absolute; left:174px; width:88px; top:40px; display:none; }
+        #roller-y { position:absolute; left:174px; width:88px; top:60px; display:none; }
+        #load-x { position:absolute; left:266px; width:88px; top:20px; display:none; }
+        #load-y { position:absolute; left:266px; width:88px; top:40px; display:none; }
+    </style>
+
+    <style>
+        .item1 {grid-area: empty; width:400px; height: 30px;font-size: 12pt; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
+        .item2 {grid-area: menu; width:600px; height: 30px;}       
+        .item3 {grid-area: output; width:400px; height: 600px;font-size: 12pt; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; float:left; overflow-y: auto; padding-right: 20px; scrollbar-gutter: stable;}   
+        .item4 {grid-area: canvas; width:600px; height: 600px;} 
+        .item5 {grid-area: blank; width:400px;height: 40px;}  
+        .item6 {grid-area: button; width:150px;height: 40px;} 
+        .item7 {grid-area: nill; width:430px; height:30px;line-height: 30px; text-align: right; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;} 
+        .item8 {grid-area: prolog; width:1020px; left:0; right:0; word-wrap: break-word;} 
+
+        .grid-container{
+            display:grid;
+            grid-template-areas:
+            'empty menu menu menu menu'
+            'output canvas canvas canvas canvas'
+            'blank button nill nill nill'
+            'prolog prolog prolog prolog prolog';
+            grid-gap: 5px;
+            background-color:rgb(255, 255, 255);
+            padding: 5px;
+            width:1060px;
+        }
+
+        .grid-container > div {
+            background-color: rgb(255, 255, 255);
+            text-align: left;
+            padding: 10px 0;
+            font-size: 14px;
+        }
+    </style>
+
+<style>
+.button {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 0px 0px;
+  height:30px;
+  width: 110px;
+  margin-left: 22px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+  font-family:Calibri;
+  margin: 1px 4px;
+  -webkit-transition-duration: 0.4s; /* Safari */
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+
+ .button1 {
+  background-color: rgb(204, 204, 204); 
+  color: black; 
+  border: 1px solid rgb(133, 133, 133);
+   margin-bottom:20px;
+  margin-left: auto;
+  margin-right: auto;
+}   
+.button1:hover {
+  background-color:  #008CBA;
+  color: rgb(255, 255, 255);
+}  
+
+.button1:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.button1s {
+  background-color:  #008CBA;
+  color: rgb(255, 255, 255);
+  border: 1px solid rgb(133, 133, 133);
+   margin-bottom:20px;
+  margin-left: auto;
+  margin-right: auto;
+}     
+
+      
+.button2 {
+  background-color: rgba(176,219,250,1); 
+  color: black; 
+  border: 1px solid #008CBA;
+}   
+.button2:hover {
+  background-color: #008CBA;
+  color: white;
+}  
+      
+.button3 {
+  background-color: rgba(250,212,156,1); 
+  color: black; 
+  border: 1px solid rgb(160, 125, 73);
+  margin-top: 0px;
+}   
+.button3:hover {
+  background-color:  rgb(160, 125, 73);
+  border: 0px solid rgb(160, 125, 73);
+  color: white;
+}  
+
+.button4 {
+  background-color: rgba(176,219,250,1); 
+  color: black; 
+  border: 1px solid #008CBA;
+  width:128px;
+  margin-left: auto;
+  margin-right: auto;
+}   
+.button4:hover {
+  background-color: #008CBA;
+  color: white;
+}  
+   
+
+.button5 {
+  background-color: rgba(176,219,250,1); 
+  color: black; 
+  border:  1px solid #008CBA;
+  height: 44px;
+  width:128px;
+  font-size: 12pt;
+  margin-left: auto;
+  margin-right: auto;
+}   
+.button5:hover {
+  background-color: #008CBA;
+  color: white;
+}  
+</style>
+
+    <script>
+   
+    var description = '';
+
+    var chatGPTinstruction = "The topic is zero-force members in truss structure. The following expression contains a list enclosed in square brackets. The list consists of several members separated by commas. Each list member is a sentence. The sentences describe the conclusions of steps taken to solve a problem. Keep the description of each step brief; don't explain the rules. Please write a paragraph based on the sequence of sentences in the list. In your description, you can number the steps. Write each step in a separate paragraph. ";
+
+    var StepCounter = 0;
+    var Step = [];
+    var StepIndex = 0;
+    var NodeC = [];
+    var NodeR = [];
+    var NodeColor = [];
+    var memberAx = [];
+    var memberAy = [];
+    var memberBx = [];
+    var memberBy = [];
+    var nN = 0;
+    var done = false;
+    var selectedTruss = 'truss1';
+    var Nsteps;
+
+    var array1 = [];
+    var array2 = [];
+    var array3 = [];
+    var array4 = [];
+    var nx = [], ny = [], aft = [], fore = [], supType = [], supN = [];
+    var nodeCount = memberCount = supportCount = 0;
+    var Ksys = [];
+    var dof = [];
+
+    var stepDesc = [];
+    var linkDesc = [];
+    var ruleDesc = [];
+        
+    for(let i=0; i<=20; i++){
+            array1.push([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+        }
+
+
+
+    function setFirstOption() {
+            document.getElementById('trusses').selectedIndex = 0;
+        }
+
+    function checkStability(){
+        encode();
+        var stable = false;
+        document.getElementById("submit").disabled = true;
+
+        if (Truss.length > 10){
+            if (trussStable(Truss)){stable = true; document.getElementById("submit").disabled = false;}
+        }
+
+
+        if (stable){
+          document.getElementById('message').innerHTML = "";
+        }
+        else{
+          document.getElementById('message').innerHTML = "<span style = 'font-size:12pt;'>The truss is <span style = 'color:rgb(143, 55, 55);'>unstable</span>. It cannot be analyzed.</span>";
+        }
+     
+    }
+
+    function trussStable(inputString) {
+        nx = [], ny = [], aft = [], fore = [], supType = [], supN = [];
+
+
+        nodeCount = memberCount = supportCount = 0;    
+
+        // Regular expression to match each predicate
+        let predicateRegex = /\w+\((?:\d+,\w+,\w+|\w+,\d+|\d+,\w+)\)/g;
+
+        // Extracting all predicates
+        let predicates = inputString.match(predicateRegex);
+
+        // Processing each predicate
+        predicates.forEach(predicate => {
+        // Extracting the type and values from the predicate
+        let type = predicate.match(/\w+/)[0];
+        let values = predicate.match(/\((.*)\)/)[1].split(',');
+
+            // Processing based on the type of predicate
+            switch (type) {
+            case 'node':
+                let [nodeNum, x, y] = values.map(Number);
+                nx[nodeNum-1] = x;
+                ny[nodeNum-1] = y;
+                nodeCount++;
+                break;
+            case 'member':
+                let [memberNum, nodeA, nodeB] = values.map(Number);
+                aft[memberNum-1] = nodeA;
+                fore[memberNum-1] = nodeB;
+                memberCount++;
+                break;
+            case 'support':
+                let [supportType, nodeLocation] = values;
+                supType.push(supportType);
+                supN.push(parseInt(nodeLocation, 10));
+                supportCount++;
+                break;
+            case 'load':
+                // Loads are not stored in this implementation
+                break;
+            // Additional cases can be added for other predicates
+        }
+    });
+
+    var stat = -1;
+    var error = 0.00001;
+
+    Ksys = zeros([2*nodeCount,2*nodeCount]);
+    (dof = []).length = 2*nodeCount; dof.fill(1);
+
+    for (var k = 0; k < memberCount; k++){
+        var ijoint;
+        ijoint = aft[k];
+        var jjoint;
+        jjoint = fore[k];
+        var x0 = nx[ijoint-1];
+        var y0 = ny[ijoint-1];
+        var x1 = nx[jjoint-1];
+        var y1 = ny[jjoint-1];
+        var dx = x1 - x0;
+        var dy = y1 - y0;
+        var L = Math.sqrt(dx*dx + dy*dy);
+
+    if ( L < error){
+        stat = 0;
+    }
+    else{
+        var i2 = 2*ijoint - 1;
+        var i1 = i2 - 1;
+        var i4 = 2*jjoint - 1;
+        var i3 = i4 - 1;
+
+        var c = dx/L;
+        var s = dy/L;
+     
+        var mk = memberStiffnessMatrix(c,s,L,1000,100);
+     
+
+        Ksys[i1][i1] += mk[0][0];
+        Ksys[i1][i2] += mk[0][1];
+        Ksys[i1][i3] += mk[0][2];
+        Ksys[i1][i4] += mk[0][3];
+
+        Ksys[i2][i1] += mk[1][0];
+        Ksys[i2][i2] += mk[1][1];
+        Ksys[i2][i3] += mk[1][2];
+        Ksys[i2][i4] += mk[1][3]; 
+        
+        Ksys[i3][i1] += mk[2][0];
+        Ksys[i3][i2] += mk[2][1];
+        Ksys[i3][i3] += mk[2][2];
+        Ksys[i3][i4] += mk[2][3];  
+        
+        Ksys[i4][i1] += mk[3][0];
+        Ksys[i4][i2] += mk[3][1];
+        Ksys[i4][i3] += mk[3][2];
+        Ksys[i4][i4] += mk[3][3];         
+        }
+    }
+    if (stat != 0){
+        for (var i = 0; i< supportCount; i++){
+
+            var j = 2*supN[i] - 1;
+            switch(supType[i]){
+                case 'pin':
+                    dof[j] = 0;
+                    dof[j-1] = 0;
+                    break;
+                case 'rollerx':
+                    dof[j] = 0;
+                    break;
+                case 'rollery':
+                    dof[j-1] = 0;
+                    break;
+            }
+        }
+        var Ktemp = Ksys;
+        var cc = 0;
+
+        for (var i = 2*nodeCount - 1; i>= 0; i--){
+            if (dof[i] == 0) {cc++; Ktemp = matrixRReduce(Ktemp,i); }
+        }
+
+
+        if (Ktemp.length > 0){
+            Ktemp = tMatrix(Ktemp,Ktemp.length,Ktemp[0].length);
+            var ij = 0;
+            for (var i = 2*nodeCount - 1; i>= 0; i--){
+                if (dof[i] == 0){
+                    Ktemp = matrixRReduce(Ktemp,i);
+                }
+            }
+            Ksys = tMatrix(Ktemp, Ktemp.length,Ktemp.length);
+        }
+        else{
+            Ksys = [];
+        }
+    }
+
+    stat = gauss(Ksys);
+
+    var Stable = false;
+
+    if (stat == 1) {Stable = true} 
+
+    return Stable;
+}
+
+    function gauss(A){
+        var n = A.length;
+        var st = 1;
+        var eps = 0.0000001;
+
+        for (var i = 0; i < n; i++){
+            var maxE1 = Math.abs(A[i][i]);
+            var maxRow = i;
+            for (var k = i + 1; k < n; k++){
+                if (Math.abs(A[k][i]) > maxE1){
+                    MaxE1 = Math.abs(A[k][i]);
+                    maxRow = k;
+                }
+            }
+            if (maxE1 < eps) st = 0;
+
+            if (st == 1){
+                for (var k = i; k < n; k++){
+                    var tmp = A[maxRow][k];
+                    A[maxRow][k] = A[i][k];
+                    A[i][k] = tmp;
+                }
+
+                for (var k = i +1; k < n; k++){
+                    var c = -A[k][i]/A[i][i];
+                    for (var j = i; j < n; j++){
+                        if (i == j){
+                            A[k][j] = 0;
+                        }
+                        else{
+                            A[k][j] += c*A[i][j];
+                        }
+                    }
+                }
+            }
+        }
+        if (st == 1 && n > 0 && Math.abs(A[n-1][n-1]) < eps) {st = 0;}
+
+        return st;
+    }
+
+    function tMatrix(array,nrow,ncol){
+        var newArray = [];
+
+        for (var i = 0; i < ncol; i++){
+            newArray.push([]);
+        }
+
+        for (var i = 0; i < nrow; i++){
+            for(var j = 0; j < ncol; j++){
+                newArray[j].push(array[i][j]);
+            }
+        }
+        return newArray;
+    }
+
+    function matrixRReduce(Matrix,index){
+        var newMatrix = [];
+        var Nr = Matrix.length;
+        for (var i = 0; i < Nr; i++){
+            if (i != index){
+                newMatrix.push(Matrix[i]);
+            }
+        }
+        return newMatrix;
+    }
+
+    function memberStiffnessMatrix(c,s,L,E,A){
+        var cof = E*A/L;
+        var k11 = c*c*cof;
+        var k12 = c*s*cof;
+        var k13 = s*s*cof;
+        return[[k11,k12,-k11,-k12],[k12,k13,-k12,-k13],[-k11,-k12,k11,k12],[-k12,-k13,k12,k13]];
+    }
+
+    function zeros(dimensions){
+        var array = [];
+        for (var i = 0; i < dimensions[0]; ++i){
+            array.push(dimensions.length == 1? 0: zeros(dimensions.slice(1)));
+        }
+        return array;
+    }
+
+    function updateTruss(){
+      
+            var x = document.getElementById("trusses").value;
+            if (x == 'truss1') {
+                selectedTruss = 'truss1';
+                Truss = "[node(1,4,4),node(2,8,4),node(3,12,4),node(4,8,1),node(5,15,1),member(1,1,2),member(2,2,3),member(3,2,4),member(4,1,4),member(5,4,5),member(6,3,5),member(7,3,4),support(pin,3),support(rollerx,2),load(4,x)]";
+            }
+            else if (x == 'truss2') {
+                selectedTruss = 'truss2';
+                Truss = "[node(1,4,5),node(2,8,5),node(3,12,5),node(4,16,5),node(5,4,1),node(6,6,3),node(7,8,1),node(8,12,3),member(1,1,2),member(2,2,3),member(3,3,4),member(4,1,5),member(5,5,7),member(6,5,6),member(7,2,6),member(8,6,7),member(9,2,7),member(10,7,8),member(11,2,8),member(12,3,8),member(13,4,8),support(pin,5),support(rollery,1),load(3,y)]";               
+            }
+            else if (x == 'truss3') {
+                selectedTruss = 'truss3';
+                Truss = "[node(1,4,8),node(2,8,8),node(3,12,8),node(4,6,1),node(5,8,3),node(6,12,3),node(7,14,1),node(8,20,1),member(1,1,4),member(2,2,5),member(3,3,6),member(4,4,5),member(5,5,6),member(6,6,7),member(7,4,7),member(8,7,8),support(pin,1),support(pin,2),support(pin,3),support(pin,8),load(4,y)]";               
+            }
+            else if (x == 'truss4') {
+                selectedTruss = 'truss4';
+                Truss = "[node(1,4,13),node(2,14,13),node(3,9,7),node(4,4,1),node(5,14,1),member(1,1,3),member(2,2,3),member(3,1,4),member(4,3,4),member(5,2,5),member(6,3,5),support(pin,1),support(pin,2),load(4,y),load(4,x)]";               
+            }   
+            else if (x == 'truss5') {
+                selectedTruss = 'truss5';
+                Truss = "[node(1,4,13),node(2,10,13),node(3,19,13),node(4,7,9),node(5,10,4),node(6,13,10),node(7,13,4),node(8,16,1),node(9,19,4),node(10,7,13),member(1,1,10),member(2,2,10),member(3,2,3),member(4,1,4),member(5,4,10),member(6,4,2),member(7,4,5),member(8,2,5),member(9,2,6),member(10,5,6),member(11,5,7),member(12,6,7),member(13,6,9),member(14,7,9),member(15,7,8),member(16,8,9),member(17,3,9),support(pin,1),support(rollerx,3),load(4,y)]";               
+            }  
+            else if (x == 'truss6') {
+                selectedTruss = 'truss6';
+                Truss = "[node(1,10,18),node(2,14,18),node(3,10,14),node(4,14,14),node(5,10,10),node(6,14,10),node(7,10,6),node(8,14,6),node(9,10,2),node(10,14,2),member(1,1,2),member(2,1,3),member(3,2,3),member(4,2,4),member(5,3,4),member(6,3,6),member(7,3,5),member(8,4,6),member(9,5,6),member(10,5,7),member(11,6,7),member(12,6,8),member(13,7,8),member(14,7,9),member(15,9,10),member(16,7,10),member(17,8,10),support(pin,1),support(pin,2),load(8,x)]";               
+            }  
+            if (x == 'truss7') {
+                selectedTruss = 'truss7';
+                Truss = "[node(1,8,1),node(2,8,4),node(3,15,1),member(1,1,3),member(2,2,3),member(3,1,2),support(pin,3),support(rollerx,2),load(1,x)]";               
+            } 
+            else if (x == 'truss8') {
+                selectedTruss = 'truss8';
+                Truss = "[node(1,2,11),node(2,4,11),node(3,6,11),node(4,10,11),node(5,14,11),node(6,16,11),node(7,18,11),node(8,4,7),node(9,16,7),node(10,6,3),node(11,10,3),node(12,14,3),member(1,1,2),member(2,2,3),member(3,3,4),member(4,4,5),member(5,5,6),member(6,6,7),member(7,1,8),member(8,2,8),member(9,3,8),member(10,8,10),member(11,3,10),member(12,4,10),member(13,10,11),member(14,5,11),member(15,4,12),member(16,11,12),member(17,9,12),member(18,5,9),member(19,6,9),member(20,7,9),member(21,3,11),support(pin,1),support(rollerx,7),load(4,y)]";               
+            }                                                   
+            else if (x == 'truss9') {
+                selectedTruss = 'truss9';
+                Truss = "[node(1,4,10),node(2,8,10),node(3,12,10),node(4,4,6),node(5,8,6),node(6,12,4),member(1,1,2),member(2,2,3),member(3,1,4),member(4,2,4),member(5,4,5),member(6,2,5),member(7,3,5),member(8,5,6),member(9,3,6),support(pin,4),support(rollerx,2),load(3,y)]";               
+            } 
+            else if (x == 'truss10') {
+                selectedTruss = 'truss10';
+                Truss = "[node(1,4,4),node(2,4,8),node(3,7,6),node(4,10,8),node(5,13,10),node(6,16,12),member(1,1,2),member(2,1,3),member(3,3,4),member(4,2,3),member(5,2,4),member(6,2,5),member(7,2,6),member(8,4,5),member(9,5,6),support(pin,2),support(pin,6),load(1,x)]";               
+            } 
+            else if (x == 'truss11') {
+                selectedTruss = 'truss11';
+                Truss = "[node(1,4,4),node(2,4,10),node(3,8,10),node(4,8,6),node(5,12,10),node(6,12,8),node(7,16,10),member(1,1,2),member(2,2,3),member(3,1,3),member(4,1,4),member(5,3,4),member(6,3,5),member(7,4,5),member(8,4,6),member(9,5,6),member(10,6,7),member(11,5,7),support(pin,1),support(rollery,2),load(3,y),load(5,y)]";               
+            }  
+            else if (x == 'truss12') {
+                selectedTruss = 'truss12';
+                Truss = "[node(1,2,8),node(2,6,8),node(3,10,8),node(4,14,8),node(5,18,8),node(6,4,6),node(7,8,6),node(8,12,6),node(9,16,6),node(10,6,4),node(11,10,4),node(12,14,4),member(1,1,2),member(2,2,3),member(3,3,4),member(4,4,5),member(5,1,6),member(6,2,6),member(7,2,10),member(8,2,7),member(9,3,7),member(10,3,8),member(11,4,8),member(12,4,12),member(13,4,9),member(14,5,9),member(15,6,10),member(16,7,10),member(17,3,11),member(18,8,12),member(19,9,12),member(20,10,11),member(21,11,12),support(pin,1),support(rollerx,5),load(10,y)]";               
+            }  
+            else if (x == 'truss13') {
+                selectedTruss = 'truss13';
+                Truss = "[node(1,2,12),node(2,6,12),node(3,10,12),node(4,14,12),node(5,18,12),node(6,6,10),node(7,14,10),node(8,6,8),node(9,14,8),node(10,10,4),member(1,1,2),member(2,2,3),member(3,3,4),member(4,4,5),member(5,1,8),member(6,6,8),member(7,2,6),member(8,8,10),member(9,6,10),member(10,3,6),member(11,3,10),member(12,3,7),member(13,7,10),member(14,4,7),member(15,7,9),member(16,9,10),member(17,5,9),support(pin,1),support(pin,5),load(2,y)]";               
+            }
+            else if (x == 'truss14') {
+                selectedTruss = 'truss14';
+                Truss = "[node(1,4,18),node(2,10,18),node(3,4,12),node(4,10,8),node(5,12,14),node(6,14,5),node(7,16,6),node(8,18,2),member(1,1,3),member(2,1,2),member(3,2,3),member(4,3,4),member(5,2,4),member(6,2,5),member(7,4,5),member(8,4,6),member(9,5,6),member(10,5,7),member(11,6,7),member(12,6,8),member(13,7,8),support(pin,1),support(pin,2),load(8,y)]";               
+            }            
+            else if (x == 'truss15') {
+                selectedTruss = 'truss15';
+                Truss = "[node(1,2,11),node(2,8,11),node(3,7,9),node(4,8,9),node(5,6,7),node(6,8,7),node(7,5,5),node(8,8,5),node(9,8,2),node(10,10,5),node(11,10,3),node(12,12,5),node(13,12,4),node(14,14,5),member(1,1,7),member(2,1,2),member(3,7,9),member(4,5,7),member(5,3,5),member(6,2,3),member(7,2,4),member(8,3,4),member(9,4,5),member(10,4,6),member(11,5,6),member(12,6,7),member(13,6,8),member(14,7,8),member(15,8,9),member(16,9,10),member(17,9,11),member(18,10,11),member(19,8,10),member(20,10,12),member(21,11,12),member(22,11,13),member(23,12,13),member(24,12,14),member(25,13,14),support(pin,1),support(rollerx,2),load(14,y)]";               
+            }   
+
+            array1 = [];
+            array2 = [];
+            array3 = [];
+            array4 = [];
+        
+            for(let i=0; i<=20; i++){
+                    array1.push([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+            }
+
+            decode();
+            draw();
+            checkStability();
+            deselectALL();
+    }          
+
+    function disableMenu(T){
+        document.getElementById("addnode").disabled = T;
+        document.getElementById("addmember").disabled = T;
+        document.getElementById("addsupport").disabled = T;
+        document.getElementById("addload").disabled = T;
+        document.getElementById("delete").disabled = T;
+        }
+   
+    function reset(){
+        var s1 = s2 = s3 = s4 = s5 = s6 = s7 = s8 = s9 = s10 = s11 = s12 = s13 = s14 = s15 = '';
+        if (selectedTruss == 'truss1') {s1 = 'selected';}
+        else if (selectedTruss == 'truss2') {s2 = 'selected';}
+        else if (selectedTruss == 'truss3') {s3 = 'selected';}
+        else if (selectedTruss == 'truss4') {s4 = 'selected';} 
+        else if (selectedTruss == 'truss5') {s5 = 'selected';}
+        else if (selectedTruss == 'truss6') {s6 = 'selected';}
+        else if (selectedTruss == 'truss7') {s7 = 'selected';}        
+        else if (selectedTruss == 'truss8') {s8 = 'selected';}
+        else if (selectedTruss == 'truss9') {s9 = 'selected';} 
+        else if (selectedTruss == 'truss10') {s10 = 'selected';} 
+        else if (selectedTruss == 'truss11') {s11 = 'selected';}                                         
+        else if (selectedTruss == 'truss12') {s12 = 'selected';}  
+        else if (selectedTruss == 'truss13') {s13 = 'selected';}  
+        else if (selectedTruss == 'truss14') {s14 = 'selected';}  
+        else if (selectedTruss == 'truss15') {s15 = 'selected';}                           
+
+        var desc = 'The ZFM Analysis Tool is an online application designed for identifying zero-force members in stable statically determinate trusses.';
+        desc += "<p>To utilize this tool, construct your truss layout with the help of the interactive interface situated on the app's right panel. </p>";
+        desc += '<ul>';
+            desc +='<li>Nodes are indicated by <strong>circles</strong>.</li>';
+            desc += '<li>Truss members are depicted as <strong>black lines</strong>.</li>';
+            desc += '<li>Loads are represented by <strong>short <span style="color:red;">red</span> lines</strong>.</li>';
+            desc += '<li>Supports are shown as <strong>triangles</strong>, with <span style="color:rgb(210, 147, 32);">orange triangles</span> symbolizing pins and <span style="color:green;">green triangles</span> indicating horizontal and vertical rollers.</li>';
+        desc += '</ul>';
+        desc += '<p>The top section of the right panel features a set of buttons that allow you to add or remove nodes, members, loads, and supports. Additionally, when no specific function is selected, you can reposition any node by simply dragging it across the screen.</p>';
+        desc += "<p>Once your truss configuration is complete, click the <strong>'Submit'</strong> button to analyze it.</p>";
+        desc += '<p>For those who prefer a quick start or to practice, the application offers a selection of example trusses that you can modify and analyze as needed.</p>';
+
+        desc += '<center><select id="trusses" class="button button1" onchange="updateTruss()">';
+            desc += '<option value="truss1" '+s1+'>Truss 1</option>';
+            desc += '<option value="truss2" '+s2+'>Truss 2</option>';
+            desc += '<option value="truss3" '+s3+'>Truss 3</option>';   
+            desc += '<option value="truss4" '+s4+'>Truss 4</option>';   
+            desc += '<option value="truss5" '+s5+'>Truss 5</option>';  
+            desc += '<option value="truss6" '+s6+'>Truss 6</option>';   
+            desc += '<option value="truss7" '+s7+'>Truss 7</option>';     
+            desc += '<option value="truss8" '+s8+'>Truss 8</option>';     
+            desc += '<option value="truss9" '+s9+'>Truss 9</option>'; 
+            desc += '<option value="truss10" '+s10+'>Truss 10</option>';  
+            desc += '<option value="truss11" '+s11+'>Truss 11</option>';   
+            desc += '<option value="truss12" '+s12+'>Truss 12</option>';
+            desc += '<option value="truss13" '+s13+'>Truss 13</option>'; 
+            desc += '<option value="truss14" '+s14+'>Truss 14</option>'; 
+            desc += '<option value="truss15" '+s15+'>Truss 15</option>';                                                                                                        
+        desc += '</select></center>';
+        desc += "<p>For further details, please consult <a href = 'ZFMguide.pdf' target='_blank'>the user\'s guide available for download in PDF format</a>.</p>";
+        document.getElementById('submit').style.display = 'block';
+        document.getElementById('reset').style.display = 'none';
+        document.getElementById('result').innerHTML = desc;
+
+        disableMenu(false);
+
+        done = false;
+        draw();
+    }
+
+    function redrawSupports(){
+    const c = document.getElementById("canvas");
+    const ctx = c.getContext("2d");
+
+    var nS = array3.length;
+    for (let NumSup = 1; NumSup <=nS; NumSup++){
+        var x = array3[NumSup-1][0];
+        var y = array3[NumSup-1][1]; 
+        var SupportType = array3[NumSup-1][2];
+
+        ctx.beginPath();
+        ctx.strokeStyle = "#000";
+        ctx.lineWidth = 0.75;
+                if(SupportType == "pin"){
+                    ctx.fillStyle = "orange";
+                    ctx.moveTo(x * (600/22), y * (600/22) + 7);
+                    ctx.lineTo(x * (600/22) + 7, y * (600/22) + 21);
+                    ctx.lineTo(x * (600/22) - 7, y * (600/22) + 21);
+                    ctx.lineTo(x * (600/22), y * (600/22) + 7);
+                    ctx.fill();
+                    ctx.stroke();
+                }
+                if(SupportType == "rollerx"){
+                    ctx.fillStyle = "green";
+                    ctx.moveTo(x * (600/22), y * (600/22) + 7);
+                    ctx.lineTo(x * (600/22) + 7, y * (600/22) + 21);
+                    ctx.lineTo(x * (600/22) - 7, y * (600/22) + 21);
+                    ctx.lineTo(x * (600/22), y * (600/22) + 7);
+                    ctx.fill();
+                    ctx.stroke();
+                }
+                if(SupportType == "rollery"){
+                    ctx.fillStyle = "green";
+                    ctx.moveTo(x * (600/22) + 7, y * (600/22));
+                    ctx.lineTo(x * (600/22) + 21, y * (600/22) - 7);
+                    ctx.lineTo(x * (600/22) + 21, y * (600/22) + 7);
+                    ctx.lineTo(x * (600/22) + 7, y * (600/22));
+                    ctx.fill();
+                    ctx.stroke();
+                }
+
+        ctx.closePath();     
+    }
+ }
+
+ function redrawLoads(){
+    const c = document.getElementById("canvas");
+    const ctx = c.getContext("2d");
+
+    var nL = array4.length;
+    for (let NumLoad = 1; NumLoad <=nL; NumLoad++){
+        var x = array4[NumLoad-1][0];
+        var y = array4[NumLoad-1][1]; 
+        var LoadType = array4[NumLoad-1][2];
+
+        ctx.beginPath();
+
+        if(LoadType == "x"){
+                    ctx.fillStyle = "#F00";
+                    ctx.fillRect(x * (600/22) - 14, y * (600/22) - 2, 8, 4);
+                }
+                if(LoadType == "y"){
+                    ctx.fillStyle = "#F00";
+                    ctx.fillRect(x * (600/22) - 2, y * (600/22) - 14, 4, 8);  
+                }
+        ctx.closePath();  
+        
+    }
+ }
+
+ function redrawNodes(){
+    const c = document.getElementById("canvas");
+    const ctx = c.getContext("2d");
+
+    for (let i = 1; i<= nN; i++){
+        ctx.beginPath();
+        var x = NodeC[i]+1;
+        var y = NodeR[i]+1;
+        ctx.arc(x * (600/22) , y * (600/22) , 7 , 0 , Math.PI * 2,false);
+
+        ctx.fillStyle = NodeColor[i];
+        ctx.fill();
+
+        if (NodeColor[i] != 'black'){
+            ctx.font = '12px Arial';
+            ctx.fillStyle = 'black';
+            ctx.fillText(i,x*(600/22)-4,y*(600/22)+4);
+        }
+
+        ctx.closePath();  
+        
+    }
+ }
+
+ function showMemberNumber(member){
+    const c = document.getElementById("canvas");
+    const ctx = c.getContext("2d");
+
+    var x1 = memberAx[member]+1;
+    var y1 = memberAy[member]+1;
+    var x2 = memberBx[member]+1;
+    var y2 = memberBy[member]+1;
+
+//   console.log( ' write member number '+member);
+ //   console.log( ' in positions ('+x1+','+y1+')('+x2+ ','+y1+')');
+
+    var midx = (x1+x2)*(600/22)/2;
+    var midy = (y1+y2)*(600/22)/2;
+
+        ctx.beginPath();
+        ctx.font = '12px Arial';
+        ctx.fillStyle = 'black';
+        ctx.fillText('['+member+']',midx-8,midy-2);
+        ctx.closePath();  
+
+ }
+
+
+ function showStep(nextStep){
+
+    var currentStep = nextStep - 1;
+    const c = document.getElementById("canvas");
+    const ctx = c.getContext("2d");
+
+    if (nextStep <= Nsteps && Step[nextStep][0] != '4'){
+        NodeColor[Step[nextStep][1]] ='yellow';  
+    }
+
+    // Rule 1
+    if (Step[currentStep][0] == '1'){
+
+        NodeColor[Step[currentStep][1]]='#dcdcdc';
+
+        var member1 = Step[currentStep][2][0];
+        var member2 = Step[currentStep][2][1];
+
+        var x1 = memberAx[member1]+1;
+        var y1 = memberAy[member1]+1;
+        var x2 = memberBx[member1]+1;
+        var y2 = memberBy[member1]+1;
+
+        var xx1 = memberAx[member2]+1;
+        var yy1 = memberAy[member2]+1;
+        var xx2 = memberBx[member2]+1;
+        var yy2 = memberBy[member2]+1;
+
+        ctx.strokeStyle = "#d0d0d0";
+        ctx.beginPath();
+        ctx.lineWidth = 3;
+        ctx.moveTo(x1 * (600/22), y1 * (600/22));
+        ctx.lineTo(x2 * (600/22), y2 * (600/22));
+        ctx.stroke();
+        ctx.closePath();
+
+        ctx.beginPath();
+        ctx.lineWidth = 3;
+        ctx.moveTo(xx1 * (600/22), yy1 * (600/22));
+        ctx.lineTo(xx2 * (600/22), yy2 * (600/22));
+        ctx.stroke();
+        ctx.closePath();        
+    }
+
+    // Rule 2
+    if (Step[currentStep][0] == '2'){
+
+        NodeColor[Step[currentStep][1]]='#dcdcdc';
+
+        var member1 = Step[currentStep][2][0];
+
+        var x1 = memberAx[member1]+1;
+        var y1 = memberAy[member1]+1;
+        var x2 = memberBx[member1]+1;
+        var y2 = memberBy[member1]+1;
+        ctx.strokeStyle = "#d0d0d0";
+        ctx.beginPath();
+        ctx.lineWidth = 3;
+        ctx.moveTo(x1 * (600/22), y1 * (600/22));
+        ctx.lineTo(x2 * (600/22), y2 * (600/22));
+        ctx.stroke();
+        ctx.closePath();
+    }
+    
+    // Rule 3
+    if (Step[currentStep][0] == '3'){
+
+    NodeColor[Step[currentStep][1]]='#dcdcdc';
+
+    var member1 = Step[currentStep][2][0];
+
+    var x1 = memberAx[member1]+1;
+    var y1 = memberAy[member1]+1;
+    var x2 = memberBx[member1]+1;
+    var y2 = memberBy[member1]+1;
+    ctx.strokeStyle = "#d0d0d0";
+    ctx.beginPath();
+    ctx.lineWidth = 3;
+    ctx.moveTo(x1 * (600/22), y1 * (600/22));
+    ctx.lineTo(x2 * (600/22), y2 * (600/22));
+    ctx.stroke();
+    ctx.closePath();
+    }
+    
+    //Rule 4
+    if (Step[currentStep][0] == '4'){
+
+        var member = Step[currentStep][2][0];
+
+        var x1 = memberAx[member]+1;
+        var y1 = memberAy[member]+1;
+        var x2 = memberBx[member]+1;
+        var y2 = memberBy[member]+1;       
+
+        ctx.strokeStyle = "#d0d0d0";
+        ctx.beginPath();
+        ctx.lineWidth = 3;
+        ctx.moveTo(x1 * (600/22), y1 * (600/22));
+        ctx.lineTo(x2 * (600/22), y2 * (600/22));
+        ctx.stroke();
+        ctx.closePath();
+
+        showMemberNumber(member);
+    }  
+    
+    // Rule 5 thru Rule 12
+    if (Step[currentStep][0] == '5' || Step[currentStep][0] == '6' || Step[currentStep][0] == '7' || Step[currentStep][0] == '8' || Step[currentStep][0] == '9' || Step[currentStep][0] == '10'  || Step[currentStep][0] == '11' || Step[currentStep][0] == '12' ){
+
+    NodeColor[Step[currentStep][1]]='#dcdcdc';
+
+    var member1 = Step[currentStep][2][0];
+
+    var x1 = memberAx[member1]+1;
+    var y1 = memberAy[member1]+1;
+    var x2 = memberBx[member1]+1;
+    var y2 = memberBy[member1]+1;
+    ctx.strokeStyle = "#d0d0d0";
+    ctx.beginPath();
+    ctx.lineWidth = 3;
+    ctx.moveTo(x1 * (600/22), y1 * (600/22));
+    ctx.lineTo(x2 * (600/22), y2 * (600/22));
+    ctx.stroke();
+    ctx.closePath();
+}   
+
+    redrawNodes();
+    redrawLoads();
+    redrawSupports();
+
+    if (nextStep <= Nsteps && Step[nextStep][0]=='4') {
+        var memnum = Step[nextStep][2][0];
+        showMemberNumber(memnum);
+    }
+    
+    writeSteps(nextStep); 
+ }
+
+function decode(){
+    var temp;
+    var nodeR = [];
+    var nodeC = [];
+    T = Truss.slice(0,-1);
+    T = T.slice(0,-1);
+    T = T.slice(1);
+
+var Tr = T.split("),");
+
+var asize = Tr.length;
+for (var i = 0; i < asize; i++){
+    if (Tr[i].includes("node")){
+
+        Tr[i] = Tr[i].slice(5);
+        temp = Tr[i].split(",");
+        array1[temp[2]][temp[1]] = 1;
+        nodeR[i] = eval(temp[2])+1;
+        nodeC[i] = eval(temp[1])+1;
+    }
+    
+    if (Tr[i].includes("member")){
+        Tr[i] = Tr[i].slice(7);
+        temp = Tr[i].split(",");
+        array2.push([nodeC[temp[1]-1],nodeR[temp[1]-1],nodeC[temp[2]-1],nodeR[temp[2]-1]]);
+    }
+
+    if (Tr[i].includes("support")){
+        Tr[i] = Tr[i].slice(8);
+        temp = Tr[i].split(",");
+        array3.push([nodeC[temp[1]-1],nodeR[temp[1]-1],temp[0]]);
+    }
+
+    if (Tr[i].includes("load")){
+        Tr[i] = Tr[i].slice(5);
+        temp = Tr[i].split(",");
+        array4.push([nodeC[temp[0]-1],nodeR[temp[0]-1],temp[1]]);
+    }
+}
+}
+
+function encode(){
+    T = "[";
+
+    nN = 0;
+    var aftR, aftC, foreR,foreC;
+    var T1, T2;
+
+    for (let Column = 0; Column<= 20; Column++){
+        for (let Row = 0; Row<=20; Row++){
+            if (array1[Row][Column]==1){
+                nN++;
+                if (T.length > 1) T += ",";
+                T = T + "node("+nN+","+Column+","+Row+")";
+                NodeC[nN] = Column;
+                NodeR[nN] = Row;
+                NodeColor[nN] = 'black';
+            }
+        }
+    }
+    
+    var nM = array2.length;
+    for (let MemNum = 1; MemNum<= nM; MemNum++){     
+        aftC = array2[MemNum-1][0]-1;
+        aftR = array2[MemNum-1][1]-1;
+        foreC = array2[MemNum-1][2]-1;
+        foreR = array2[MemNum-1][3]-1;
+
+        memberAx[MemNum] = aftC;
+        memberAy[MemNum] = aftR;
+        memberBx[MemNum] = foreC;
+        memberBy[MemNum] = foreR;       
+
+        T1 = 0;
+        T2 = 0;
+        for (let i = 1; i<= nN; i++){
+            if (NodeC[i] == aftC && NodeR[i] == aftR) T1 = i;
+        }
+        
+        for (let i = 1; i<= nN; i++){
+            if (NodeC[i] == foreC && NodeR[i] == foreR) T2 = i;
+        }
+        
+        if (T.length > 1) T += ",";      
+        T += "member("+MemNum+','+T1+","+T2+")";    
+    }
+
+    var nS = array3.length;
+    for (let NumSup = 1; NumSup <=nS; NumSup++){
+      var SupC = array3[NumSup-1][0]-1;
+      var SupR = array3[NumSup-1][1]-1; 
+      var SupType = array3[NumSup-1][2];
+
+      T1 = 0;
+      for (let i = 1; i<=nN; i++){
+        if (NodeC[i] == SupC && NodeR[i] == SupR) T1 = i; 
+      }
+        if (T.length > 1) T += ",";      
+        T += "support("+SupType+','+T1+")";   
+    }
+
+    var nL = array4.length;
+    for (let NumLoad = 1; NumLoad <=nL; NumLoad++){
+      var LoadC = array4[NumLoad-1][0]-1;
+      var LoadR = array4[NumLoad-1][1]-1; 
+      var LoadType = array4[NumLoad-1][2];
+      T1 = 0;
+      for (let i = 1; i<=nN; i++){
+        if (NodeC[i] == LoadC && NodeR[i] == LoadR) T1 = i; 
+      }
+        if (T.length > 1) T += ",";      
+        T += "load("+T1+','+LoadType+")";   
+    }
+
+    T = T + "]";
+    Truss = T;
+}
+
+decode();
+encode();
+
+function writeSteps(currentStep){
+    var ms = 'step';
+    if (Nsteps > 1) ms = 'steps';  
+    document.getElementById("result").innerHTML = 'We can identify the zero-force members in the truss in <b>'+Nsteps +' '+ms+'</b>.'; 
+
+    if (currentStep <= Nsteps){
+
+        for (var i = 1; i <= currentStep; i++){
+            document.getElementById('result').innerHTML += '<p><b>Step '+i+'</b> '+stepDesc[i]+'</p>';
+        }
+
+        if (currentStep <= Nsteps) document.getElementById('result').innerHTML += '<center><a>'+linkDesc[currentStep]+'</a></center>';
+    }
+    else{
+        
+        for (var i = 1; i <= Nsteps; i++){
+            document.getElementById('result').innerHTML += '<p><b>Step '+i+'</b> '+stepDesc[i]+'</p>';
+        }
+    }
+}
+
+function process(R){
+
+    // R is returned array from prolog.
+    // The first element of the array is true/false.
+    // The second element of the array gives the number of steps: {Y/N} where N is the number of steps.
+    // N is the same as R.length - 2.
+    // The remaining elements of R are the steps data.
+
+    Nsteps = R.length - 1;
+
+
+    // if true is returned
+    if (R[0]){
+        Step = R;
+        for (var i = 1; i <= Nsteps; i++){
+            var Rule = R[i][0];
+            var N = R[i][1];
+            var L = R[i][2];
+            var nexti = i+1;
+
+            if (Rule==1) {
+                    stepDesc[i] = '(Rule 1): There are no loads or supports at Node '+N+'. Since the node connects only two (non-collinear) members, they carry no force.';}     
+                else if (Rule==2) {
+                    stepDesc[i] =  '(Rule 2): There are no loads or supports at Node '+N+'. Since the node connects three members, two of which are collinear, the other member carries no force.';}
+                else if (Rule==3) {
+                    stepDesc[i] = '(Rule3): Node '+N+' is connected to one member only. Since there is no support and load at the node, the member carries no force.';}
+                else if (Rule==4) {
+                    stepDesc[i] = '(Rule 4): Member '+L+' is located between two pin supports, therefore, no force can be transmitted to it.';}
+                else if (Rule==5) {
+                    stepDesc[i] = '(Rule 5): Only one member is connected to Node '+N+'. The roller at the node takes the entire vertical load; the member carries no portion of the load.';}
+                else if (Rule==6) {
+                    stepDesc[i] = '(Rule 6): Only one member is connected to Node '+N+'. Since there is a roller but no load at the node, the member carries no force.';}
+               else if (Rule==7) {
+                    stepDesc[i] = '(Rule 7): Only one member is connected to Node '+N+'. Since there is a roller support at the node and the applied load is not in the direction of the member, the member carries no force.';}
+                else if (Rule==8) {
+                    stepDesc[i] = '(Rule 8): Only one member is connected to Node '+N+'. Since there is a roller support but no load at the node, the member carries no force.';}
+                else if (Rule==9) {
+                    stepDesc[i] = '(Rule 9): At Node '+N+', the horizontal roller supports two connected members - a horizontal one and a vertical one. Since there are no horizontal loads acting at the node, the horizontal member carries no axial force.';}
+                else if (Rule==10) {
+                    stepDesc[i] = '(Rule 10): At Node '+N+', the vertical roller supports two connected members - a horizontal one and a vertical one. Since there are no vertical loads acting at the node, the vertical member carries no axial force.';}
+                else if (Rule==11) {
+                    stepDesc[i] = '(Rule 11): There is a horizontal load at Node '+N+'. The node connects two members one of which is also horizontal. Since there are no other loads or support at the node, the non-horizontal member carries no axial force.';}            
+                else if (Rule==12) {
+                    stepDesc[i] = '(Rule 12): There is a vertical load at Node '+N+'. The node connects two members one of which is also vertical. Since there are no other loads or support at the node, the non-vertical member carries no axial force.';} 
+               
+                    linkDesc[i] = '<br><center><a id =link'+i+' href="#" onClick="showStep('+nexti+');">Remove the zero-force member.</a></center></p>';     
+                    if (i != Nsteps){ 
+                    linkDesc[i] ='<br><center><a id =link'+i+' href="#" onClick="showStep('+nexti+');">Remove the zero-force member and go to the Step '+nexti+'.</a></center></p>';
+                }
+        }
+    }
+    else{
+        document.getElementById('result').innerHTML = 'No zero-force members were detected.';
+    }
+
+   
+    if (Nsteps > 0){
+
+        writeSteps(1);
+
+        const c = document.getElementById("canvas");
+        const ctx = c.getContext("2d");
+
+        // Step 1
+        var RuleN = Step[1][0];
+       
+        if (Step[1][0] != "4"){
+            NodeColor[Step[1][1]] = 'yellow';
+            redrawNodes(); 
+            redrawLoads(); 
+            redrawSupports();
+        }
+        else {
+            var memnum = Step[1][2][0];
+            console.log(' step 1 member '+memnum);
+            showMemberNumber(memnum);
+        }
+    }    
+
+}
+
+</script>
+
+</head>
+<body  onload="setFirstOption()">
+<center>
+    <div class="grid-container">
+        <div class="item1">
+            <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+                <td style="width: 12%; border: 0px solid black; padding: 0px;"></td>
+                <td style="border: 0px solid black; padding: 0px;"><b>Zero-Force Member (ZFM) Analysis Tool</b><br>Dr. Structure | Educative Technologies, LLC</td>
+            </tr>
+            </table>
+        </div>
+        <div class="item2">
+            <div id="container" style="position:relative">
+
+            <div  style="position:absolute; left:0px">
+                <button id="addnode" style="position:absolute;left:0px" class="button button1" onclick="select('addnode')">Add Node</button>
+                <button id="addnodeS" class="button button1s" style="position:absolute;display:none; left:0px;" onclick="deselectALL()">Add Node</button>
+            </div> 
+            <div style="position:absolute; left:115px" >
+                <button id="addmember"  style="position:absolute;left:0px" class="button button1" onclick="select('addmember')">Add Member</button>  
+                <button id="addmemberS" class="button button1s" style="position:absolute;display:none; left:0px;" onclick="deselectALL()">Add Member</button>      
+            </div>
+            <div style="position:absolute; left:230px">
+                <button id="addsupport"   class="button button1"  style="position:absolute;left:0px;width:110px;"onclick="select('addsupport')">Add Support</button>
+                <button id="addsupportS"  style="position:absolute;left:0px; display:none;"  class="button button1s"  onclick="deselectALL()">Add Support</button>
+                <select id="supportList" class="button button1" style="position:absolute; left:0px; top:32px; display:none;" onchange="updateSupport()">
+                    <option value="pin" selected>Pin</option>
+                    <option value="rollerx">Roller-x</option>
+                    <option value="rollery">Roller-y</option>
+                </select>
+            </div>
+            <div style="position:absolute; left:345px" >
+                <button id="addload"  class="button button1" style="position:absolute;left:0px; width:110px;"onclick="select('addload')">Add Load</button>
+                <button id="addloadS"  style="position:absolute;left:0px; display:none;"  class="button button1s"  onclick="deselectALL()">Add Load</button>
+                <select id="loadList" class="button button1" style="position:absolute; left:0px; top:32px; display:none;" onchange="updateLoad()">
+                    <option value="loadx" selected>Horizontal</option>
+                    <option value="loady" >Vertical</option>
+                </select>
+            </div>
+            <div  style="position:absolute; left:490px">
+                <button id="delete" style="position:absolute;left:0px" class="button button1" onclick="select('delete')">Delete</button>
+                <button id="deleteS" class="button button1s" style="position:absolute;display:none; left:0px;" onclick="deselectALL()">Delete</button>
+            </div>     
+
+            </div>
+        </div>
+        <div class="item3" id="result">
+            The ZFM Analysis Tool is an online application designed to identify zero-force members in stable, statically determinate trusses.
+    
+            <p>To utilize this tool, you are invited to draw your truss layout utilizing the user interface provided on the right panel. </p>
+            
+            <ul>
+                <li>Nodes are shown using <strong>circles</strong>.</li>
+                <li>Truss members are represented as <strong>black lines</strong>.</li>
+                <li>Loads are represented by <strong>short <span style="color:red;">red</span> lines</strong>.</li>
+                <li>Supports are displayed as <strong>triangles</strong>; <span style="color:rgb(210, 147, 32);">orange triangles</span> denote pins, while <span style="color:green;">green triangles</span> represent horizontal and vertical rollers.</li>
+            </ul>
+        
+            <p>The upper section of the right panel provides a set of buttons that allows you to add or delete nodes, members, loads, and supports. Additionally, when no specific button is selected, you can reposition any node by simply dragging it across the screen.</p>
+        
+            <p>After finalizing your truss configuration, initiate the analysis by clicking the <strong>'Submit'</strong> button.</p>
+        
+            <p>For those who prefer a quick start or to practice, the application offers a selection of example trusses that you can modify and analyze as needed.</p>
+            <center><select id="trusses" class="button button1" onchange="updateTruss()">
+                <option value="truss1" selected>Truss 1</option>
+                <option value="truss2">Truss 2</option>
+                <option value="truss3">Truss 3</option>
+                <option value="truss4">Truss 4</option>  
+                <option value="truss5">Truss 5</option>    
+                <option value="truss6">Truss 6</option>
+                <option value="truss7">Truss 7</option>  
+                <option value="truss8">Truss 8</option>     
+                <option value="truss9">Truss 9</option> 
+                <option value="truss10">Truss 10</option> 
+                <option value="truss11">Truss 11</option> 
+                <option value="truss12">Truss 12</option>   
+                <option value="truss13">Truss 13</option>  
+                <option value="truss14">Truss 14</option>   
+                <option value="truss15">Truss 15</option>                                                                                                                                      
+            </select></center>
+    <p>For further details, please consult <a href = 'ZFMguide.pdf' target="_blank">the user's guide available for download in PDF format</a>.</p>
+        </div>
+        <div class="item4">
+            <canvas id="canvas"></canvas>
+        </div>
+        <div class="item5"></div>
+        <div class="item6">
+            <button id="submit" type="button"  class="button button3" onclick="runFunction()">Submit</button>
+            <button id="reset" type="button"  class="button button1" style = "display:none" onclick="reset()">Reset</button>
+        </div>
+        <div class="item7" id="message" style="text-align:right; font-size:12pt; "></div>
+
+        <div class="item8" id="response" ></div>
+    </div>
+ 
+    <div id="progressBarContainer" style="position:absolute; display:none;top:100px; left:140px">
+        <img src="gears.gif" width="70%" alt="Loading...">
+        <p> <span id="countdown" style = "font-size: 11pt; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">Processing ... </span></p>
+    </div>
+</center>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 600;
+        canvas.height = 600;
+
+        let arrgrab = [];
+
+        let add = false;
+        let del = false;
+        let member = false;
+        let line = { active: false, x1: false, y1: false, x2: false, y2: false, allow: true}
+        let grab = false;
+        let grabx = false;
+        let graby = false;
+        grabpin = false;
+        grabrollerx = false;
+        grabrollery = false;
+        let min = 600/44;
+        let max = 600 - 600/44;
+        let oneOnly = false;
+        let x = 0;
+        let y = 0;
+        let pin = false;
+        let rollerx = false;
+        let rollery = false;
+        let togle = 0;
+        let loadx = false;
+        let loady = false;
+        let togle1 = 0;
+        let grabloadx = false;
+        let grabloady = false;
+        let delStop = 0;
+
+        function updateLoad(){
+            loadx = false;
+            loady = false;
+            var x = document.getElementById("loadList").value;
+            if (x == 'loadx') loadx = true;
+            if (x == 'loady') loady = true;
+        }
+
+        function updateSupport(){
+            pin = false;
+            rollerx = false;
+            rollery = false;
+            var x = document.getElementById("supportList").value;
+            if (x == 'pin') pin = true;
+            if (x == 'rollerx') rollerx = true;
+            if (x == 'rollery') rollery = true;
+        }
+
+
+        function select(X){
+            deselectALL();
+            document.getElementById(X).style.display="none";
+            document.getElementById(X+"S").style.display="block"; 
+            if (X=='addnode') {add = true; document.body.style.cursor = 'copy';}  
+            if (X=='addmember') {member=true; document.body.style.cursor = 'copy'; }
+            if (X=='delete'){del = true; document.body.style.cursor = 'pointer';}
+            if (X=='addsupport'){ document.getElementById("supportList").style.display="block"; pin = true; document.body.style.cursor = 'copy'; }
+            if (X=='addload'){ document.getElementById("loadList").style.display="block"; loadx=true; document.body.style.cursor = 'copy';}
+        }
+
+        function deselect(X){
+            document.getElementById(X).style.display="block";
+            document.getElementById(X+"S").style.display="none"; 
+            document.body.style.cursor = 'default';  
+        }
+
+        function deselectALL(){
+            deselect('addnode');
+            deselect('addmember');
+            deselect('addsupport');
+            deselect('addload');
+            deselect('delete'); 
+            document.getElementById("supportList").style.display="none";
+            document.getElementById("supportList").selectedIndex = 0;            
+            document.getElementById("loadList").style.display="none";
+            document.getElementById("loadList").selectedIndex = 0;
+                add = false;          
+                del = false; 
+                member = false; 
+                line.active = false;
+                line.x1 = false;
+                line.y1 = false;
+                line.x2 = false;
+                line.y2 = false;  
+                pin = false;
+                rollerx = false;
+                rollery = false;
+                loadx = false;
+                loady = false;
+        }
+
+        canvas.addEventListener('pointerdown' , (e) => {
+            if(!done){
+            // deleting loads, supports, and lines
+                array4.forEach( (element , index) => {
+                    if(del){
+                        if(element[2] == "x"){
+                            let xmin = element[0] * (600/22) - 14; 
+                            let xmax = element[0] * (600/22) - 6;
+                            let ymin = element[1] * (600/22) - 2;
+                            let ymax = element[1] * (600/22) + 2;
+                            if(y >= ymin && y <= ymax && x >= xmin && x <= xmax){ 
+                                array4.splice(index, 1); 
+                                delStop = 1;
+                            }
+                        }else if(element[2] == "y"){
+                            let xmin = element[0] * (600/22) - 2; 
+                            let xmax = element[0] * (600/22) + 2;
+                            let ymin = element[1] * (600/22) - 14;
+                            let ymax = element[1] * (600/22) - 6;
+                            if(y >= ymin && y <= ymax && x >= xmin && x <= xmax){ 
+                                array4.splice(index, 1); 
+                                delStop = 1;
+                            }
+                        }
+                    }
+                });
+                array3.forEach( (element , index) => {
+                    if(del && delStop == 0){
+                        if(element[2] == "pin" || element[2] == "rollerx"){
+                            let ymin = element[1] * (600/22) + 7; 
+                            let ymax = element[1] * (600/22) + 21;
+                            let xmin = element[0] * (600/22) - ((y - (element[1] * (600/22) + 7))/2);
+                            let xmax = element[0] * (600/22) + ((y - (element[1] * (600/22) + 7))/2);
+                            if(y >= ymin && y <= ymax && x >= xmin && x <= xmax){ 
+                                array3.splice(index, 1); 
+                                delStop = 1;
+                            }
+                        }else if(element[2] == "rollery"){
+                            let xmin = element[0] * (600/22) + 7; 
+                            let xmax = element[0] * (600/22) + 21;
+                            let ymin = element[1] * (600/22) - ((x - (element[0] * (600/22) + 7))/2);
+                            let ymax = element[1] * (600/22) + ((x - (element[0] * (600/22) + 7))/2);
+                            if(y >= ymin && y <= ymax && x >= xmin && x <= xmax){ 
+                                array3.splice(index, 1); 
+                                delStop = 1;
+                            }
+                        }
+                    checkStability();
+                    }
+                  
+                });
+                array2.forEach( (element , index) => { 
+                    if(del && element[0] != element[2] && element[1] != element[3] && delStop == 0){
+                        let smallx;
+                        let smally;
+                        let bigx;
+                        let bigy;
+                        if(element[0] >= element[2]){ smallx = element[2] * (600/22); bigx = element[0] * (600/22); 
+                        }else if(element[2] >= element[0]){ smallx = element[0] * (600/22); bigx = element[2] * (600/22); }
+                        if(element[1] >= element[3]){ smally = element[3] * (600/22); bigy = element[1] * (600/22); 
+                        }else if(element[3] >= element[1]){ smally = element[1] * (600/22); bigy = element[3] * (600/22);}
+                        let line1 = Math.sqrt( Math.abs(e.offsetX - element[0] * (600/22)) * Math.abs(e.offsetY - element[1] * (600/22)) ) +
+                         Math.sqrt( Math.abs(e.offsetX - element[2] * (600/22)) * Math.abs(e.offsetY - element[3] * (600/22)) );
+                        let line2 = Math.sqrt( Math.abs(element[2] * (600/22) - element[0] * (600/22)) * Math.abs(element[3] * (600/22) - element[1] * (600/22)) );
+                        let lineplus = line1 + 0.1;
+                        let lineminus = line1 - 0.1;
+                        if(e.offsetX <= bigx && e.offsetX >= smallx && e.offsetY <= bigy && e.offsetY >= smally){
+                            if(line2 <= lineplus && line2 >= lineminus){
+                                array2.splice(index, 1);
+                                checkStability();
+                            }
+                        }
+                    }else if(del && element[0] == element[2] && delStop == 0){
+                        let smallx = element[0] * (600/22) - 1;
+                        let smally;
+                        let bigx = element[0] * (600/22) + 1;
+                        let bigy;
+                        if(element[1] > element[3]){ smally = element[3] * (600/22); bigy = element[1] * (600/22); 
+                        }else if(element[3] > element[1]){ smally = element[1] * (600/22); bigy = element[3] * (600/22);}
+                        if(e.offsetX <= bigx && e.offsetX >= smallx && e.offsetY <= bigy && e.offsetY >= smally){
+                            array2.splice(index, 1);
+                            checkStability();
+                        }
+                    }else if(del && element[1] == element[3] && delStop == 0){
+                        let smallx;
+                        let smally = element[1] * (600/22) - 1;
+                        let bigx;
+                        let bigy = element[1] * (600/22) + 1;
+                        if(element[0] > element[2]){ smallx = element[2] * (600/22); bigx = element[0] * (600/22); 
+                        }else if(element[2] > element[0]){ smallx = element[0] * (600/22); bigx = element[2] * (600/22);}
+                        if(e.offsetX <= bigx && e.offsetX >= smallx && e.offsetY <= bigy && e.offsetY >= smally){
+                            array2.splice(index, 1);
+                            checkStability();
+                        }
+                    }
+                
+                });
+                
+                array1.forEach( (element , index) => {
+                    let index1 = index;
+                    let x = (index + 1) * (600/22);
+                    let xplus = x + (600/44);
+                    let xminus = x - (600/44);
+                    element.forEach( (element , index) => {
+                        let y = (index + 1) * (600/22);
+                        let yplus = y + (600/44);
+                        let yminus = y - (600/44); 
+                        let line1 = Math.sqrt( Math.abs(e.offsetX - x) * Math.abs(e.offsetX - x) + Math.abs(e.offsetY - y) * Math.abs(e.offsetY - y) );
+                        if(e.offsetX <= xplus && e.offsetX >= xminus && e.offsetY <= yplus && e.offsetY >= yminus){
+
+                            // add node
+                            if(add && !oneOnly)
+                            { 
+                                array1[index][index1] = 1; 
+                                oneOnly = true;
+                            }
+
+                            // delete node
+                            else if(del && line1 <= 7){ 
+                                let indexplusx = index1 + 1;
+                                let indexplusy = index + 1;
+                                array1[index][index1] = 0; 
+                                
+                                let del1 = function(){
+                                    array2.forEach( (element , index) => {
+                                        if(element[0] == indexplusx && element[1] == indexplusy || element[2] == indexplusx && element[3] == indexplusy){
+                                            array2.splice(index, 1);
+                                            del1();
+                                        }
+                                    });
+                                }
+                                del1();
+                                array3.forEach( (pelement , pindex) => {
+                                    if(pelement[0] == indexplusx && pelement[1] == indexplusy){
+                                        array3.splice(pindex, 1);
+                                    }
+                                });
+                                let del11 = function(){
+                                    array4.forEach( (lelement , lindex) => {
+                                        if(lelement[0] == indexplusx && lelement[1] == indexplusy){
+                                            array4.splice(lindex, 1);
+                                            del11();
+                                        }
+                                    });
+                                }
+                                del11();
+                            }
+                            
+                            // move node
+                            else if(!add && !del && !member && !pin && !rollerx && !rollery && !loadx && !loady && array1[index][index1] == 1){ 
+                                
+                                document.body.style.cursor = 'grabbing'; 
+
+                                grabx = index1;
+                                graby = index;
+                                grab = true; 
+                                let indexplusx = index1 + 1;
+                                let indexplusy = index + 1;
+                                array1[index][index1] = 0; 
+
+                                // delete and redraw member(s) at the node
+                                let del2 = function(){
+                                    array2.forEach( (element , index) => {
+                                        if(element[0] == indexplusx && element[1] == indexplusy || element[2] == indexplusx && element[3] == indexplusy){
+                                            if(element[0] == indexplusx && element[1] == indexplusy){
+                                                arrgrab.push([element[2], element[3]]);
+                                            }else if(element[2] == indexplusx && element[3] == indexplusy){
+                                                arrgrab.push([element[0], element[1]]);
+                                            }
+                                            array2.splice(index, 1);
+                                            del2();
+                                        }
+                                    });
+                                }
+                                del2();
+                            
+                                // delete and redraw support at the node
+                                array3.forEach( (pelement , pindex) => {
+                                    if(pelement[0] == indexplusx && pelement[1] == indexplusy){
+                                        if(pelement[2] == "pin"){
+                                            grabpin = true;
+                                        }else if(pelement[2] == "rollerx"){
+                                            grabrollerx = true;
+                                        }else if(pelement[2] == "rollery"){
+                                            grabrollery = true;
+                                        }
+                                        array3.splice(pindex, 1);
+                                    }
+                                });
+
+                                array4.forEach( (lelement , lindex) => {
+                                    if(lelement[0] == indexplusx && lelement[1] == indexplusy){
+                                        if(lelement[2] == "x"){
+                                            grabloadx = true;
+                                        }else if(lelement[2] == "y"){
+                                            grabloady = true;
+                                        }
+                                        array4.splice(lindex, 1);
+                                    }
+                                });
+                                array4.forEach( (lelement , lindex) => {
+                                    if(lelement[0] == indexplusx && lelement[1] == indexplusy){
+                                        if(lelement[2] == "x"){
+                                            grabloadx = true;
+                                        }else if(lelement[2] == "y"){
+                                            grabloady = true;
+                                        }
+                                        array4.splice(lindex, 1);
+                                    }
+                                });                                
+                            }
+                            
+                            else if(member && array1[index][index1] == 1){ 
+                                let x2 = index1 + 1;
+                                let y2 = index + 1;
+                                if(!line.active){ 
+                                    line.active = true; 
+                                    line.x1 = index1 + 1; 
+                                    line.y1 = index + 1;
+                                }else if(line.x1){ 
+                                    
+                                    array2.forEach( (element , index) => {
+                                        
+                                        var Match =  lineMatch(line.x1,line.y1,x2,y2,element[0],element[1],element[2],element[3]);
+
+                                        if(Match){ 
+                                            line.allow = false; 
+                                        }
+                                    });
+                                    if(line.allow){
+                                        line.active = false; 
+                                        line.x2 = index1 + 1; 
+                                        line.y2 = index + 1;
+                                        array2.push([line.x1, line.y1, line.x2, line.y2]); 
+                                    //    checkStability();
+
+                                        line.x1 = false;
+                                        line.y1 = false;
+                                        line.x2 = false;
+                                        line.y2 = false;
+                                    }else if(!line.allow){
+                                        line.x1 = index1 + 1; 
+                                        line.y1 = index + 1;
+                                    }
+                                    line.allow = true;
+                                }
+                            }else if(pin && array1[index][index1] == 1){
+                                let haveIt = false;
+                                array3.forEach( (pelement, pindex) => {
+                                    let x = pelement[0] - 1;
+                                    let y = pelement[1] - 1;
+                                    if(x == index1 && y == index){
+                                        haveIt = true;
+                                    }
+                                });
+                                if(!haveIt){
+                                    array3.push([index1 + 1, index + 1, "pin"]);
+
+                                //    checkStability()
+                                }
+                            }else if(rollerx && array1[index][index1] == 1){
+                                let haveIt = false;
+                                array3.forEach( (pelement, pindex) => {
+                                    let x = pelement[0] - 1;
+                                    let y = pelement[1] - 1;
+                                    if(x == index1 && y == index){
+                                        haveIt = true;
+                                    }
+                                });
+                                if(!haveIt){
+                                    array3.push([index1 + 1, index + 1, "rollerx"]);
+                                 //   checkStability();
+                                }
+                            }else if(rollery && array1[index][index1] == 1){
+                                let haveIt = false;
+                                array3.forEach( (pelement, pindex) => {
+                                    let x = pelement[0] - 1;
+                                    let y = pelement[1] - 1;
+                                    if(x == index1 && y == index){
+                                        haveIt = true;
+                                    }
+                                });
+                                if(!haveIt){
+                                    array3.push([index1 + 1, index + 1, "rollery"]);
+                                    checkStability()
+                                }
+                            }else if(loadx && array1[index][index1] == 1){
+                                let haveIt = false;
+                                array4.forEach( (lelement, lindex) => {
+                                    let x = lelement[0] - 1;
+                                    let y = lelement[1] - 1;
+                                    if(x == index1 && y == index && lelement[2] == "x"){
+                                        haveIt = true;
+                                    }
+                                });
+                                if(!haveIt){
+                                    array4.push([index1 + 1, index + 1, "x"]);
+                                //    checkStability()
+                                }
+                            }else if(loady && array1[index][index1] == 1){
+                                let haveIt = false;
+                                array4.forEach( (lelement, lindex) => {
+                                    let x = lelement[0] - 1;
+                                    let y = lelement[1] - 1;
+                                    if(x == index1 && y == index && lelement[2] == "y"){
+                                        haveIt = true;
+                                    }
+                                });
+                                if(!haveIt){
+                                    array4.push([index1 + 1, index + 1, "y"]);
+                                   // checkStability()
+                                }
+                            }     
+                        }
+                //    checkStability();
+                    }
+                    );
+                });
+                oneOnly = false;
+                delStop = 0;
+            }
+        //checkStability();
+        });
+
+        canvas.addEventListener('pointerup' , (e) => {
+
+            document.body.style.cursor = 'default'; 
+
+            if(grab){
+                array1.forEach( (element , index) => {
+                    let index1 = index;
+                    let x = (index + 1) * (600/22);
+                    let xplus = x + (600/44);
+                    let xminus = x - (600/44);
+                    element.forEach( (element , index) => {
+                        let indexplusx = index1 + 1;
+                        let indexplusy = index + 1;
+                        let y = (index + 1) * (600/22);
+                        let yplus = y + (600/44);
+                        let yminus = y - (600/44); 
+                        if(e.offsetX <= xplus && e.offsetX >= xminus && e.offsetY <= yplus && e.offsetY >= yminus && !oneOnly || e.offsetX < min || e.offsetX > max || e.offsetY < min || e.offsetY > max){
+                            if(array1[index][index1] == 0 && !oneOnly && e.offsetX > min && e.offsetX < max && e.offsetY > min && e.offsetY < max){
+                                array1[index][index1] = 1;
+                                gograb = false;
+                            }else if(array1[index][index1] == 1 || e.offsetX < min || e.offsetX > max || e.offsetY < min || e.offsetY > max){
+                                array1[graby][grabx] = 1;
+                                gograb = true;
+                            }
+                            oneOnly = true;
+                            arrgrab.forEach( (element , index) => {
+                                if(!gograb){
+                                    array2.push([indexplusx, indexplusy, element[0], element[1]]); 
+                                }else if(gograb){
+                                    array2.push([grabx + 1, graby + 1, element[0], element[1]]);
+                                }
+                            });
+                            if(!gograb){
+                                if(grabpin){
+                                    array3.push([indexplusx , indexplusy, "pin"]);
+                                    grabpin = false;
+                                }else if(grabrollerx){
+                                    array3.push([indexplusx , indexplusy, "rollerx"]);
+                                    grabrollerx = false;
+                                }else if(grabrollery){
+                                    array3.push([indexplusx , indexplusy, "rollery"]);
+                                    grabrollery = false;
+                                }
+                            }else if(gograb){
+                                if(grabpin){
+                                    array3.push([grabx + 1 , graby + 1, "pin"]);
+                                    grabpin = false;
+                                }else if(grabrollerx){
+                                    array3.push([grabx + 1 , graby + 1, "rollerx"]);
+                                    grabrollerx = false;
+                                }else if(grabrollery){
+                                    array3.push([grabx + 1 , graby + 1, "rollery"]);
+                                    grabrollery = false;
+                                }
+                            }
+                            if(!gograb){
+                                if(grabloadx){
+                                    array4.push([indexplusx , indexplusy, "x"]);
+                                    grabloadx = false;
+                                }
+                                if(grabloady){
+                                    array4.push([indexplusx , indexplusy, "y"]);
+                                    grabloady = false;
+                                }
+                            }else if(gograb){
+                                if(grabloadx){
+                                    array4.push([grabx + 1 , graby + 1, "x"]);
+                                    grabloadx = false;
+                                }
+                                if(grabloady){
+                                    array4.push([grabx + 1 , graby + 1, "y"]);
+                                    grabloady = false;
+                                }
+                            }
+                            arrgrab = [];   
+                        }
+                    });
+                  
+                });
+                oneOnly = false;
+            }
+            grab = false;
+            checkStability();
+        });
+
+        canvas.addEventListener('pointermove' , (e) => {
+                x = e.offsetX;
+                y = e.offsetY;
+        });
+        
+        function draw(){
+ 
+            ctx.clearRect(0 , 0 , canvas.width , canvas.height);
+            ctx.strokeStyle = "#000";
+            ctx.strokeRect(1, 1, 598, 598);
+            ctx.strokeStyle = "#d3d3d3";
+
+            ctx.lineWidth = 1;
+
+            for(let i=0; i<=21; i++){
+                ctx.beginPath(); 
+                ctx.moveTo(0 , i * (600/22));  
+                ctx.lineTo(600 , i * (600/22));  
+                ctx.closePath();
+                ctx.stroke();
+            }
+            for(let i=0; i<=21; i++){
+                ctx.beginPath(); 
+                ctx.moveTo(i * (600/22) , 0);  
+                ctx.lineTo(i * (600/22) , 600);  
+                ctx.closePath();
+                ctx.stroke();
+            }
+
+            array1.forEach( (element , index) => {
+                let y = index + 1;
+                element.forEach( (element , index) => {
+                    if(element == 1){ let x = index + 1; 
+                        ctx.beginPath();
+                        ctx.arc(x * (600/22) , y * (600/22) , 7 , 0 , Math.PI * 2 , false)
+                        ctx.fill();
+                        ctx.closePath();
+                    }
+                });
+            });
+
+            if(grab){
+                ctx.beginPath();
+                ctx.arc(x , y , 7 , 0 , Math.PI * 2 , false);
+                ctx.fill();
+                ctx.closePath();
+                arrgrab.forEach( (element , index) => {
+                    ctx.strokeStyle = "#000";
+                    ctx.beginPath();
+                    ctx.moveTo(x , y);
+                    ctx.lineTo(element[0] * (600/22), element[1] * (600/22));
+                    ctx.stroke();
+                    ctx.closePath();
+                });
+                if(grabpin){
+                    ctx.strokeStyle = "#000";
+                    ctx.fillStyle = "orange";
+                    ctx.beginPath();
+                    ctx.moveTo(x, y + 7);
+                    ctx.lineTo(x + 7, y + 21);
+                    ctx.lineTo(x - 7, y + 21);
+                    ctx.lineTo(x, y + 7);
+                    ctx.fill();
+                    ctx.stroke();
+                    ctx.closePath();
+                }else if(grabrollerx){
+                    ctx.strokeStyle = "#000";
+                    ctx.fillStyle = "green";
+                    ctx.beginPath();
+                    ctx.moveTo(x, y + 7);
+                    ctx.lineTo(x + 7, y + 21);
+                    ctx.lineTo(x - 7, y + 21);
+                    ctx.lineTo(x, y + 7);
+                    ctx.fill();
+                    ctx.stroke();
+                    ctx.closePath();
+                }else if(grabrollery){
+                    ctx.strokeStyle = "#000";
+                    ctx.fillStyle = "green";
+                    ctx.beginPath();
+                    ctx.moveTo(x + 7, y);
+                    ctx.lineTo(x + 21, y - 7);
+                    ctx.lineTo(x + 21, y + 7);
+                    ctx.lineTo(x + 7, y);
+                    ctx.fill();
+                    ctx.stroke();
+                    ctx.closePath();
+                }
+            }
+
+            if(line.active){
+                ctx.strokeStyle = "#000";
+                ctx.beginPath();
+                ctx.moveTo(x , y);
+                ctx.lineTo(line.x1 * (600/22), line.y1 * (600/22));
+                ctx.stroke();
+                ctx.closePath();
+            }
+
+            array2.forEach( (element , index) => {
+                ctx.strokeStyle = "#000";
+                ctx.beginPath();
+                ctx.moveTo(element[0] * (600/22), element[1] * (600/22));
+                ctx.lineTo(element[2] * (600/22), element[3] * (600/22));
+                ctx.stroke();
+                ctx.closePath();
+                if(element[0] == element[2] && element[1] == element[3]){
+                    array2.splice(index, 1);
+                }
+            });
+
+            array3.forEach((element, index) => {
+                if(element[2] == "pin"){
+                    ctx.strokeStyle = "#000";
+                    ctx.fillStyle = "orange";
+                    ctx.beginPath();
+                    ctx.moveTo(element[0] * (600/22), element[1] * (600/22) + 7);
+                    ctx.lineTo(element[0] * (600/22) + 7, element[1] * (600/22) + 21);
+                    ctx.lineTo(element[0] * (600/22) - 7, element[1] * (600/22) + 21);
+                    ctx.lineTo(element[0] * (600/22), element[1] * (600/22) + 7);
+                    ctx.fill();
+                    ctx.stroke();
+                    ctx.closePath();
+                }
+                if(element[2] == "rollerx"){
+                    ctx.strokeStyle = "#000";
+                    ctx.fillStyle = "green";
+                    ctx.beginPath();
+                    ctx.moveTo(element[0] * (600/22), element[1] * (600/22) + 7);
+                    ctx.lineTo(element[0] * (600/22) + 7, element[1] * (600/22) + 21);
+                    ctx.lineTo(element[0] * (600/22) - 7, element[1] * (600/22) + 21);
+                    ctx.lineTo(element[0] * (600/22), element[1] * (600/22) + 7);
+                    ctx.fill();
+                    ctx.stroke();
+                    ctx.closePath();
+                }
+                if(element[2] == "rollery"){
+                    ctx.strokeStyle = "#000";
+                    ctx.fillStyle = "green";
+                    ctx.beginPath();
+                    ctx.moveTo(element[0] * (600/22) + 7, element[1] * (600/22));
+                    ctx.lineTo(element[0] * (600/22) + 21, element[1] * (600/22) - 7);
+                    ctx.lineTo(element[0] * (600/22) + 21, element[1] * (600/22) + 7);
+                    ctx.lineTo(element[0] * (600/22) + 7, element[1] * (600/22));
+                    ctx.fill();
+                    ctx.stroke();
+                    ctx.closePath();
+                }
+            });
+            ctx.fillStyle = "black";
+            ctx.strokeStyle = "black";
+
+            array4.forEach((element, index) => {
+                if(element[2] == "x"){
+                    ctx.fillStyle = "#F00";
+                    ctx.fillRect(element[0] * (600/22) - 14, element[1] * (600/22) - 2, 8, 4);
+                    //ctx.strokeRect(element[0] * (600/22) - 14, element[1] * (600/22) - 2, 8, 4);
+                }
+                if(element[2] == "y"){
+                    ctx.fillStyle = "#F00";
+                    ctx.fillRect(element[0] * (600/22) - 2, element[1] * (600/22) - 14, 4, 8);
+                    //ctx.strokeRect(element[0] * (600/22) - 2, element[1] * (600/22) - 14, 4, 8);
+                }
+            });
+            ctx.fillStyle = "black";
+
+            if(grab){
+                if(grabloadx){
+                    ctx.strokeStyle = "#000";
+                    ctx.fillStyle = "#F00";
+                    ctx.fillRect(x - 14, y - 2, 8, 4);
+                   // ctx.strokeRect(x - 14, y - 2, 8, 4);
+                }
+                if(grabloady){
+                    ctx.strokeStyle = "#000";
+                    ctx.fillStyle = "#F00";
+                    ctx.fillRect(x - 2, y - 14, 4, 8);
+                   // ctx.strokeRect(x - 2, y - 14, 4, 8);
+                }
+            }
+            ctx.fillStyle = "black";
+
+            if (!done) requestAnimationFrame(draw);
+        }
+
+        function lineMatch(x1,y1,x2,y2,xx1,yy1,xx2,yy2){
+            var M = false;
+
+            if (x1 == x2 && y1 == y2){
+                M = true;
+            }
+            else{
+                var dx1 = x1 - xx1;
+                var dy1 = y1 - yy1;
+                var dx2 = x2 - xx2;
+                var dy2 = y2 - yy2;
+
+
+                if (dx1 == 0 && dx2 == 0 && dy1 == 0 && dy2 == 0) {M = true;}
+                else{
+                    dx1 = x1 - xx2;
+                    dy1 = y1 - yy2;
+                    dx2 = x2 - xx1;
+                    dy2 = y2 - yy1;
+
+                    if (dx1 == 0 && dx2 == 0 && dy1 == 0 && dy2 == 0){
+                        M = true;
+                    }
+                }
+            }     
+            return M
+        }
+
+        draw();
+
+    </script>
+
+    <script>
+    async function callOpenAI() {
+        //    const prompt = 'A truss comprises four joints and five members. The joint locations are: Joint 1 (0,0), joint 2 (4,0), joint 3 (8,0), joint 4 (4,5). Member end joints. Member 1: joints 1 and 2. Member 2: joints 2 and 3. Member 3: joints 1 and 4. Member 4: joints 3 and 4. Member 5: joints 2 and 4. There is a pin support at joint 1 and roller support at joint 3. A horizontal load of 20 kN is applied at joint 4. List the collinear members in the truss. I just need the list, no explanation is necessary.';
+        //  const prompt = document.getElementById("dbox").value;
+        const prompt = chatGPTinstruction
+        
+          document.getElementById('result').value = '';
+        
+        const response = await fetch('backend.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `prompt=${encodeURIComponent(prompt)}`
+            });
+        
+            if (response.status == 200) {  
+        
+                const jsonData = await response.json();
+                var count = Object.keys(jsonData).length;
+                var keys = Object.keys(jsonData);
+                var vals = Object.values(jsonData);
+
+                
+        
+                document.getElementById('result').value = jsonData.choices[0].message.content;
+
+            } else {
+                console.error('Error:', response);
+                document.getElementById('result').value = 'Error occurred' + response.status;
+            }
+
+        }
+        </script>
+<script>
+    var lastLeftPosition = document.getElementById('result').getBoundingClientRect().left;
+    window.addEventListener('resize', function() {
+    var currentLeftPosition = document.getElementById('result').getBoundingClientRect().left;
+    if (currentLeftPosition !== lastLeftPosition) {
+
+        lastLeftPosition = currentLeftPosition;
+        // Handle the position change here
+        updateGearPosition();
+    }
+});
+
+</script>
+
+</body>
+</html>

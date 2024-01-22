@@ -160,6 +160,8 @@
    
     var description = '';
 
+    var chatGPTinstruction = "The topic is zero-force members in truss structure. The following expression contains a list enclosed in square brackets. The list consists of several members separated by commas. Each list member is a sentence. The sentences describe the conclusions of steps taken to solve a problem. Keep the description of each step brief; don't explain the rules. Please write a paragraph based on the sequence of sentences in the list. In your description, you can number the steps. Write each step in a separate paragraph. ";
+
     var StepCounter = 0;
     var Step = [];
     var StepIndex = 0;
@@ -206,7 +208,7 @@
         if (Truss.length > 10){
             if (trussStable(Truss)){stable = true; document.getElementById("submit").disabled = false;}
         }
-
+        console.log('from checkStability:'+stable);
 
         if (stable){
           document.getElementById('message').innerHTML = "";
@@ -219,7 +221,7 @@
 
     function trussStable(inputString) {
         nx = [], ny = [], aft = [], fore = [], supType = [], supN = [];
-
+        console.log('from Stable Truss: Input Truss: '+inputString);
 
         nodeCount = memberCount = supportCount = 0;    
 
@@ -319,7 +321,7 @@
     }
     if (stat != 0){
         for (var i = 0; i< supportCount; i++){
-
+     //       console.log('from Stable Truss: Support['+(i+1)+'] '+supType[i]+' located at node '+supN[i]);
             var j = 2*supN[i] - 1;
             switch(supType[i]){
                 case 'pin':
@@ -341,6 +343,8 @@
             if (dof[i] == 0) {cc++; Ktemp = matrixRReduce(Ktemp,i); }
         }
 
+//        console.log('from Truss Stable: Size of Ksys is reduced by '+cc);
+//        console.log('                   original size:'+Ksys.length);
 
         if (Ktemp.length > 0){
             Ktemp = tMatrix(Ktemp,Ktemp.length,Ktemp[0].length);
@@ -356,7 +360,7 @@
             Ksys = [];
         }
     }
-
+//    console.log('                   final size:'+Ksys.length);
     stat = gauss(Ksys);
 
     var Stable = false;
@@ -370,6 +374,8 @@
         var n = A.length;
         var st = 1;
         var eps = 0.0000001;
+
+//        console.log('from gauss: size of A is '+n);
 
         for (var i = 0; i < n; i++){
             var maxE1 = Math.abs(A[i][i]);
@@ -697,9 +703,6 @@
     var x2 = memberBx[member]+1;
     var y2 = memberBy[member]+1;
 
-//   console.log( ' write member number '+member);
- //   console.log( ' in positions ('+x1+','+y1+')('+x2+ ','+y1+')');
-
     var midx = (x1+x2)*(600/22)/2;
     var midy = (y1+y2)*(600/22)/2;
 
@@ -711,26 +714,37 @@
 
  }
 
-
  function showStep(nextStep){
 
-    var currentStep = nextStep - 1;
+    // i is the next step
+    // ii is the step for which members need to be removed.
+
+    var currentI = nextStep - 2;
+    var nextI = currentI + 1;
+    var previousStep = nextStep-1;
     const c = document.getElementById("canvas");
     const ctx = c.getContext("2d");
 
- 
+  //
 
-    if (nextStep <= Nsteps && Step[nextStep][0] != '4'){
-        NodeColor[Step[nextStep][1]] ='yellow';  
+    if (nextI < Nsteps){
+        NodeColor[Step[nextI][1]] ='yellow';  
     }
 
     // Rule 1
-    if (Step[currentStep][0] == '1'){
+    if (Step[currentI][0] == 1){
 
-        NodeColor[Step[currentStep][1]]='#dcdcdc';
+        NodeColor[Step[currentI][1]]='#dcdcdc';
 
-        var member1 = Step[currentStep][2][0];
-        var member2 = Step[currentStep][2][1];
+        var temp = Step[currentI][2];
+        // remove ending ]
+        temp = temp.slice(0,-1);
+     //  remove beginning [
+        temp = temp.slice(1);
+
+        var Tr = temp.split(",");
+        var member1 = Tr[0];
+        var member2 = Tr[1];
 
         var x1 = memberAx[member1]+1;
         var y1 = memberAy[member1]+1;
@@ -759,11 +773,18 @@
     }
 
     // Rule 2
-    if (Step[currentStep][0] == '2'){
+    if (Step[currentI][0] == 2){
 
-        NodeColor[Step[currentStep][1]]='#dcdcdc';
+        NodeColor[Step[currentI][1]]='#dcdcdc';
 
-        var member1 = Step[currentStep][2][0];
+        var temp = Step[currentI][2];
+        // remove ending ]
+        temp = temp.slice(0,-1);
+     //  remove beginning [
+        temp = temp.slice(1);
+
+        var Tr = temp.split(",");
+        var member1 = Tr[0];
 
         var x1 = memberAx[member1]+1;
         var y1 = memberAy[member1]+1;
@@ -779,11 +800,16 @@
     }
     
     // Rule 3
-    if (Step[currentStep][0] == '3'){
+    if (Step[currentI][0] == 3){
 
-    NodeColor[Step[currentStep][1]]='#dcdcdc';
+    NodeColor[Step[currentI][1]]='#dcdcdc';
 
-    var member1 = Step[currentStep][2][0];
+    var temp = Step[currentI][2];
+    temp = temp.slice(0,-1);
+    temp = temp.slice(1);
+
+    var Tr = temp.split(",");
+    var member1 = Tr[0];
 
     var x1 = memberAx[member1]+1;
     var y1 = memberAy[member1]+1;
@@ -799,9 +825,17 @@
     }
     
     //Rule 4
-    if (Step[currentStep][0] == '4'){
+    if (Step[currentI][0] == 4){
 
-        var member = Step[currentStep][2][0];
+
+        var temp = Step[currentI][2];
+        // remove ending ]
+        temp = temp.slice(0,-1);
+        //  remove beginning [
+        temp = temp.slice(1);
+
+        var Tr = temp.split(",");
+        var member = Tr[0];
 
         var x1 = memberAx[member]+1;
         var y1 = memberAy[member]+1;
@@ -819,12 +853,17 @@
         showMemberNumber(member);
     }  
     
-    // Rule 5 thru Rule 12
-    if (Step[currentStep][0] == '5' || Step[currentStep][0] == '6' || Step[currentStep][0] == '7' || Step[currentStep][0] == '8' || Step[currentStep][0] == '9' || Step[currentStep][0] == '10'  || Step[currentStep][0] == '11' || Step[currentStep][0] == '12' ){
+    // Rule 8 thru Rule 12
+    if (Step[currentI][0] == 5 || Step[currentI][0] == 6 || Step[currentI][0] == 7 || Step[currentI][0] == 8 || Step[currentI][0] == 9 || Step[currentI][0] == 10  || Step[currentI][0] == 11 || Step[currentI][0] == 12 ){
 
-    NodeColor[Step[currentStep][1]]='#dcdcdc';
+    NodeColor[Step[currentI][1]]='#dcdcdc';
 
-    var member1 = Step[currentStep][2][0];
+    var temp = Step[currentI][2];
+    temp = temp.slice(0,-1);
+    temp = temp.slice(1);
+
+    var Tr = temp.split(",");
+    var member1 = Tr[0];
 
     var x1 = memberAx[member1]+1;
     var y1 = memberAy[member1]+1;
@@ -839,14 +878,21 @@
     ctx.closePath();
 }   
 
-  
     redrawNodes();
     redrawLoads();
     redrawSupports();
- 
-    if (nextStep <= Nsteps && Step[nextStep][0]=='4') {
-        var memnum = Step[nextStep][2][0];
-        showMemberNumber(memnum);
+
+    if (nextI < Nsteps && Step[nextI][0]==4) {
+        var memnum = Step[nextI][2];
+        
+        // remove ending ]
+        memnum = memnum.slice(0,-1);
+        //  remove beginning [{}]
+        memnum = memnum.slice(1);
+
+        var W = memnum.split(",");
+        var mem = W[0];
+        showMemberNumber(mem);
     }
     
     writeSteps(nextStep); 
@@ -968,6 +1014,8 @@ function encode(){
 
     T = T + "]";
     Truss = T;
+
+    console.log('Encoded truss:'+Truss);
 }
 
 decode();
@@ -979,6 +1027,7 @@ function writeSteps(currentStep){
     document.getElementById("result").innerHTML = 'We can identify the zero-force members in the truss in <b>'+Nsteps +' '+ms+'</b>.'; 
 
     if (currentStep <= Nsteps){
+        console.log('writing step '+currentStep);
 
         for (var i = 1; i <= currentStep; i++){
             document.getElementById('result').innerHTML += '<p><b>Step '+i+'</b> '+stepDesc[i]+'</p>';
@@ -996,75 +1045,112 @@ function writeSteps(currentStep){
 
 function process(R){
 
-    Nsteps = R.length - 1;
+    // R is returned array from prolog.
+    // The first element of the array constains {_/_}, so it is to be igonred.
+    // The second element of the array gives the number of steps: {Y/N} where N is the number of steps.
+    // N is the same as R.length - 2.
+    // The remaining elements of R are the steps data.
 
-    // if true is returned
-    if (R[0]){
-        Step = R;
-        for (var i = 1; i <= Nsteps; i++){
-            var Rule = R[i][0];
-            var N = R[i][1];
-            var L = R[i][2];
-            var nexti = i+1;
-
-            if (Rule==1) {
-                    stepDesc[i] = '(Rule 1): There are no loads or supports at Node '+N+'. Since the node connects only two (non-collinear) members, they carry no force.';}     
-                else if (Rule==2) {
-                    stepDesc[i] =  '(Rule 2): There are no loads or supports at Node '+N+'. Since the node connects three members, two of which are collinear, the other member carries no force.';}
-                else if (Rule==3) {
-                    stepDesc[i] = '(Rule3): Node '+N+' is connected to one member only. Since there is no support and load at the node, the member carries no force.';}
-                else if (Rule==4) {
-                    stepDesc[i] = '(Rule 4): Member '+L+' is located between two pin supports, therefore, no force can be transmitted to it.';}
-                else if (Rule==5) {
-                    stepDesc[i] = '(Rule 5): Only one member is connected to Node '+N+'. The roller at the node takes the entire vertical load; the member carries no portion of the load.';}
-                else if (Rule==6) {
-                    stepDesc[i] = '(Rule 6): Only one member is connected to Node '+N+'. Since there is a roller but no load at the node, the member carries no force.';}
-               else if (Rule==7) {
-                    stepDesc[i] = '(Rule 7): Only one member is connected to Node '+N+'. Since there is a roller support at the node and the applied load is not in the direction of the member, the member carries no force.';}
-                else if (Rule==8) {
-                    stepDesc[i] = '(Rule 8): Only one member is connected to Node '+N+'. Since there is a roller support but no load at the node, the member carries no force.';}
-                else if (Rule==9) {
-                    stepDesc[i] = '(Rule 9): At Node '+N+', the horizontal roller supports two connected members - a horizontal one and a vertical one. Since there are no horizontal loads acting at the node, the horizontal member carries no axial force.';}
-                else if (Rule==10) {
-                    stepDesc[i] = '(Rule 10): At Node '+N+', the vertical roller supports two connected members - a horizontal one and a vertical one. Since there are no vertical loads acting at the node, the vertical member carries no axial force.';}
-                else if (Rule==11) {
-                    stepDesc[i] = '(Rule 11): There is a horizontal load at Node '+N+'. The node connects two members one of which is also horizontal. Since there are no other loads or support at the node, the non-horizontal member carries no axial force.';}            
-                else if (Rule==12) {
-                    stepDesc[i] = '(Rule 12): There is a vertical load at Node '+N+'. The node connects two members one of which is also vertical. Since there are no other loads or support at the node, the non-vertical member carries no axial force.';} 
-               
-                    linkDesc[i] = '<br><center><a id =link'+i+' href="#" onClick="showStep('+nexti+');">Remove the zero-force member.</a></center></p>';     
-                    if (i != Nsteps){ 
-                    linkDesc[i] ='<br><center><a id =link'+i+' href="#" onClick="showStep('+nexti+');">Remove the zero-force member and go to the Step '+nexti+'.</a></center></p>';
-                }
-        }
-    }
-    else{
-        document.getElementById('result').innerHTML = 'No zero-force members were detected.';
-    }
-
+    Nsteps = R.length - 2;
+    Step = [];
    
-    if (Nsteps > 0){
+    if (Nsteps > 0 && !R[1].includes("Y/0")){
 
+
+        for(var index = 2; index < Nsteps+2; index++){
+            var token = R[index];
+            var Lindex = token.indexOf('L/');
+            var L = token.substring(Lindex+2);
+
+            token = token.substring(0,Lindex-2);
+
+            // node number
+            var Nindex = token.indexOf('N/');
+            var N = token.substring(Nindex+2);
+
+            token = token.substring(0,Nindex-2);
+
+            // truss
+            var Tindex = token.indexOf('T/');
+            var T = token.substring(Tindex+2);
+
+            token = token.substring(0,Tindex-2);
+
+            //rule number
+            var Ruleindex = token.indexOf('R/');
+            var Rule = token.substring(Ruleindex+2);
+
+             token = token.substring(0,Ruleindex-2);
+
+            //step number
+             var Sindex = token.indexOf('S/');
+             var S = token.substring(Sindex+2);
+
+             Step.push([Rule,N,L]);  
+
+             var ii = index - 1;
+             var nexti = ii + 1;
+                     
+                if (Rule==1) {
+                    stepDesc[ii] = '(Rule 1): There are no loads or supports at Node '+N+'. Since the node connects only two (non-collinear) members, they carry no force.';}     
+                else if (Rule==2) {
+                    stepDesc[ii] =  '(Rule 2): There are no loads or supports at Node '+N+'. Since the node connects three members, two of which are collinear, the other member carries no force.';}
+                else if (Rule==3) {
+                    stepDesc[ii] = '(Rule3): Node '+N+' is connected to one member only. Since there is no support and load at the node, the member carries no force.';}
+                else if (Rule==4) {
+                    stepDesc[ii] = '(Rule 4): Member '+L+' is located between two pin supports, therefore, no force can be transmitted to it.';}
+                else if (Rule==5) {
+                    stepDesc[ii] = '(Rule 5): Only one member is connected to Node '+N+'. The roller at the node takes the entire vertical load; the member carries no portion of the load.';}
+                else if (Rule==6) {
+                    stepDesc[ii] = '(Rule 6): Only one member is connected to Node '+N+'. Since there is a roller but no load at the node, the member carries no force.';}
+               else if (Rule==7) {
+                    stepDesc[ii] = '(Rule 7): Only one member is connected to Node '+N+'. Since there is a roller support at the node and the applied load is not in the direction of the member, the member carries no force.';}
+                else if (Rule==8) {
+                    stepDesc[ii] = '(Rule 8): Only one member is connected to Node '+N+'. Since there is a roller support but no load at the node, the member carries no force.';}
+                else if (Rule==9) {
+                    stepDesc[ii] = '(Rule 9): At Node '+N+', the horizontal roller supports two connected members - a horizontal one and a vertical one. Since there are no horizontal loads acting at the node, the horizontal member carries no axial force.';}
+                else if (Rule==10) {
+                    stepDesc[ii] = '(Rule 10): At Node '+N+', the vertical roller supports two connected members - a horizontal one and a vertical one. Since there are no vertical loads acting at the node, the vertical member carries no axial force.';}
+                else if (Rule==11) {
+                    stepDesc[ii] = '(Rule 11): There is a horizontal load at Node '+N+'. The node connects two members one of which is also horizontal. Since there are no other loads or support at the node, the non-horizontal member carries no axial force.';}            
+                else if (Rule==12) {
+                    stepDesc[ii] = '(Rule 12): There is a vertical load at Node '+N+'. The node connects two members one of which is also vertical. Since there are no other loads or support at the node, the non-vertical member carries no axial force.';} 
+
+                    linkDesc[ii] = '<br><center><a id =link'+ii+' href="#" onClick="showStep('+nexti+');">Remove the zero-force member.</a></center></p>';
+                if (ii != Nsteps){ 
+                    linkDesc[ii] ='<br><center><a id =link'+ii+' href="#" onClick="showStep('+nexti+');">Remove the zero-force member and go to the Step '+nexti+'.</a></center></p>';
+                }
+                console.log('step '+ii+ 'of '+Nsteps);
+        }
         writeSteps(1);
 
         const c = document.getElementById("canvas");
         const ctx = c.getContext("2d");
 
         // Step 1
-        var RuleN = Step[1][0];
-       
-        if (Step[1][0] != "4"){
-            NodeColor[Step[1][1]] = 'yellow';
+        if (Step[0][0] != 4){
+            NodeColor[Step[0][1]] = 'yellow';
             redrawNodes(); 
             redrawLoads(); 
             redrawSupports();
         }
-        else {
-            var memnum = Step[1][2][0];
-            console.log(' step 1 member '+memnum);
-            showMemberNumber(memnum);
+        if (Step[0][0] == 4) {
+            var memnum = Step[0][2];
+       
+        // remove ending ]
+            memnum = memnum.slice(0,-1);
+        //  remove beginning [{}]
+            memnum = memnum.slice(1);
+
+            var W = memnum.split(",");
+            var mem = W[0];
+            showMemberNumber(mem);
         }
-    }    
+    }
+    else{
+     document.getElementById('result').innerHTML = 'No zero-force members were detected.';
+    }
+        
 
 }
 
@@ -1704,7 +1790,6 @@ function process(R){
                 ctx.stroke();
             }
 
-          
             array1.forEach( (element , index) => {
                 let y = index + 1;
                 element.forEach( (element , index) => {
@@ -1873,14 +1958,14 @@ function process(R){
                 var dx2 = x2 - xx2;
                 var dy2 = y2 - yy2;
 
-
+  //              console.log('direct macth '+ dx1, +' '+dy1+' '+dx2+' '+dy2);
                 if (dx1 == 0 && dx2 == 0 && dy1 == 0 && dy2 == 0) {M = true;}
                 else{
                     dx1 = x1 - xx2;
                     dy1 = y1 - yy2;
                     dx2 = x2 - xx1;
                     dy2 = y2 - yy1;
-
+    //                console.log('reverse macth '+ dx1, +' '+dy1+' '+dx2+' '+dy2);
                     if (dx1 == 0 && dx2 == 0 && dy1 == 0 && dy2 == 0){
                         M = true;
                     }
@@ -1893,12 +1978,46 @@ function process(R){
 
     </script>
 
+    <script>
+    async function callOpenAI() {
+        //    const prompt = 'A truss comprises four joints and five members. The joint locations are: Joint 1 (0,0), joint 2 (4,0), joint 3 (8,0), joint 4 (4,5). Member end joints. Member 1: joints 1 and 2. Member 2: joints 2 and 3. Member 3: joints 1 and 4. Member 4: joints 3 and 4. Member 5: joints 2 and 4. There is a pin support at joint 1 and roller support at joint 3. A horizontal load of 20 kN is applied at joint 4. List the collinear members in the truss. I just need the list, no explanation is necessary.';
+        //  const prompt = document.getElementById("dbox").value;
+        const prompt = chatGPTinstruction
+        
+          document.getElementById('result').value = '';
+        
+        const response = await fetch('backend.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `prompt=${encodeURIComponent(prompt)}`
+            });
+        
+            if (response.status == 200) {  
+        
+                const jsonData = await response.json();
+                var count = Object.keys(jsonData).length;
+                var keys = Object.keys(jsonData);
+                var vals = Object.values(jsonData);
+
+                
+        
+                document.getElementById('result').value = jsonData.choices[0].message.content;
+
+            } else {
+                console.error('Error:', response);
+                document.getElementById('result').value = 'Error occurred' + response.status;
+            }
+
+        }
+        </script>
 <script>
     var lastLeftPosition = document.getElementById('result').getBoundingClientRect().left;
     window.addEventListener('resize', function() {
     var currentLeftPosition = document.getElementById('result').getBoundingClientRect().left;
     if (currentLeftPosition !== lastLeftPosition) {
-
+        console.log('Left position changed due to window resize.');
         lastLeftPosition = currentLeftPosition;
         // Handle the position change here
         updateGearPosition();

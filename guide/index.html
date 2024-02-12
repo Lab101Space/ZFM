@@ -1,1 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZFM User Guide</title>
+    <link rel="stylesheet" href="style.css">
 
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Get all the links inside the tableOfContents
+            var links = document.querySelectorAll("#tableOfContents a");
+            
+            // Loop through each link
+            links.forEach(function(link) {
+                // Add click event listener
+                link.addEventListener("click", function(event) {
+                    event.preventDefault(); // Prevent default link behavior
+    
+                    // Get the page name from the id of the link
+                    var pageId = link.id;
+                    var pageName = 'pages/'+pageId + ".html";
+                    
+                    // Set the source of the iframe to the corresponding page
+                    document.getElementById("pageFrame").src = pageName;
+                });
+            });
+        });
+    </script>
+
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+    // Get a reference to the tableOfContents div
+    var tableOfContentsDiv = document.getElementById('tableOfContents');
+
+    // Get a reference to the footer div
+    var footerDiv = document.getElementById('footer');
+    
+    // Add click event listener to tableOfContents links
+    tableOfContentsDiv.addEventListener("click", function(event) {
+        // Check if the clicked element is an <a> tag
+        if (event.target.tagName === 'A') {
+            event.preventDefault(); // Prevent default link behavior
+            
+            // Get the text of the clicked link
+            var clickedLinkText = event.target.innerText;
+            
+            // Update the text of the footer
+            footerDiv.textContent = clickedLinkText;
+        }
+    });
+});
+
+    </script>
+
+    <script>
+        function resetIntroPage() {
+
+            var frame = document.getElementById('pageFrame');
+            frame.src = "pages/introduction.html";
+
+        //    document.getElementById("pageFrame").src = 'pages/introduction.html';
+
+        //    footerDiv = document.getElementById('footer');
+         //   footerDiv.textContent = '1. Introduction';
+        }
+
+        // Attach the function to the window.onload event
+
+    </script>
+    
+
+</head>
+<body>
+    <div id="parentContainer">
+        <div id="titleBar">
+            <div id="logoImage"></div>
+            <div id="logoText"> <span style='font-family:Sansation Bold; font-size: 20px;letter-spacing: 2.8px; color: #f7933f; user-select:none;'>EDUCATIVE</span><br><span style='font-family:Sansation; font-size: 16px;letter-spacing: 1px; color: #ffffff;user-select:none;'>TECHNOLOGIES</span></div>
+            <div id="titleText">
+                <div style="font-size:14pt;">ZFM: A learning tool for identifying zero-force members in trusses</div>
+                <div style="font-size:18pt;">User Guide</div>
+            </div>
+        </div>
+        <div id="bodyContent">
+            <div id="tableOfContents">
+                <h3>Table of Contents</h3>
+                <ul>
+                <li><a href="#" id = 'introduction'>1. Introduction</a><br></li>
+                <li><a href="#" id = 'overview'>2. System Overview</a><br></li>
+                <li><a href="#" id='canvas'>3. Drawing Canvas</a><br></li>
+                <li><a href="#" id='tools'>4. Truss Construction Tools</a><br>
+                    <ul>
+                        <li>
+                          
+                            <a href="#" id='addNode' style="display: flex; align-items: center; text-decoration: none;">
+                                4.1. Add & Move Node <img src='images/videoIcon.png' style="margin-left: 5px;">
+                            </a><br>
+                            
+                        </li>
+                        <li>
+                            <a href="#" id='addMember' style="display: flex; align-items: center; text-decoration: none;">4.2. Add Member
+                                <img src='images/videoIcon.png' style="margin-left: 5px;">
+                            </a><br></li>
+                        <li><a href="#" id='addSupport' style="display: flex; align-items: center; text-decoration: none;">4.3. Add Support
+                            <img src='images/videoIcon.png' style="margin-left: 5px;">                        
+                        </a><br></li>
+                        <li><a href="#" id='addLoad' style="display: flex; align-items: center; text-decoration: none;">4.4. Add Load
+                            <img src='images/videoIcon.png' style="margin-left: 5px;">  
+                        </a><br></li>
+                        <li><a href="#" id='deleteElement' style="display: flex; align-items: center; text-decoration: none;">4.5. Delete Element
+                            <img src='images/videoIcon.png' style="margin-left: 5px;">  
+                        </a><br></li>
+                    </ul>                
+                </li>
+                <li><a href="#" id='analyzeTruss'>5. Analyzing the Truss</a><br></li>
+                <li><a href="#" id='exampleTrusses'>6. Example Trusses</a><br></li>
+                <li><a href="#" id='analysisRules'>7. Analysis Rules</a><br></li>
+                </ul>
+
+                <div id="verticalLine"></div> 
+            </div>
+
+            <div id="pageContent">
+                <iframe id="pageFrame" src="pages/introduction.html" frameborder="0" style="background-color: #ffffff;"></iframe>
+                <div id="footer">1. Introduction</Page></div>
+            </div>
+        </div>
+    </div>
+
+<script>
+            window.onload = resetIntroPage();
+</script>
+
+
+</body>
+</html>

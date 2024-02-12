@@ -1,0 +1,129 @@
+html {
+    font-family: Calibri, sans-serif; /* Set font type to Calibri for the entire HTML */
+    user-select: none; /* Make text non-selectable */
+    -webkit-user-select: none; /* For Safari */
+    -moz-user-select: none; /* For Firefox */
+    -ms-user-select: none; /* For Internet Explorer/Edge */
+    -webkit-touch-callout: none; /* Disable long press on mobile */
+}
+
+
+#parentContainer {
+    background-color: rgb(255, 255, 255);
+    width: 1000px;
+    margin: 0 auto; /* Center the container horizontally */
+}
+
+
+
+#tableOfContents {
+    background-color: rgb(255, 255, 255);
+    width: 250px;
+    height: 650px;
+    font-size: 18px; /* Set font size to 16px */
+    overflow-y: auto; /* Add vertical scroll bar */
+    float: left; /* Float the div to the left */
+    position: relative;
+}
+
+#verticalLine {
+    position: absolute;
+    top: 20px; /* Align 20px from the top */
+    bottom: 20px; /* Align 20px from the bottom */
+    right: 0; /* Align to the right side of the div */
+    width: 1px; /* Adjust the width of the line as needed */
+    background-color: rgb(21, 77, 104);
+}
+
+
+
+#tableOfContents a {
+    display: block;
+    text-decoration: none;
+    color: black;
+    margin-bottom: -10px; /* Add some spacing between items */
+}
+
+#tableOfContents a:hover {
+    background-color: rgb(193, 213, 234); /* Change background color on hover */
+}
+
+
+#pageFrame {
+    background-color: rgb(255, 255, 255);
+    width: 100%; /* Set iframe width to match pageContent */
+    height: calc(100% - 40px); /* Adjust height to accommodate footer */
+    border: none; /* Remove border */
+    overflow-y: auto; /* Add auto vertical scrollbar */
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 10px;
+}
+
+#pageFrame object {
+    margin: 0;
+    padding: 0;
+}
+
+#bodyContent {
+    background-color: rgb(255, 255, 255);
+    width: 100%;
+    display: flex;
+}
+
+#pageContent {
+    background-color: rgb(255, 255, 255);
+    flex: 1;
+    position: relative; /* Needed for absolutely positioning children */
+}
+
+#footer {
+    background-color: rgb(255, 255, 255);
+    height: 40px;
+    display: flex;
+    align-items: center; /* Align vertically in the middle */
+    justify-content: flex-end; /* Right justify the content */
+    padding-right: 10px; /* Add some padding for better presentation */
+}
+
+
+#titleBar {
+    background-color: rgb(21, 77, 104);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 80px; /* Adjust height as needed */
+}
+
+#logoImage,
+#logoText,
+#titleText {
+    width: 100px;
+    text-align: center;
+}
+
+#titleText {
+    text-align: right;
+    flex-grow: 1;
+    padding-right: 10px; /* Add some padding for better presentation */
+    color: white;
+}
+
+#logoImage {
+    width: 100px;
+    height: 80px; /* Adjust the height as needed */
+    background-image: url('images/icon1.png');
+    background-size: cover;
+    background-position: center 0px; /* Shift the background image down by 10 pixels */
+}
+
+#tableOfContents ul,
+#tableOfContents ul ul {
+    list-style: none; /* Remove default list-style (bullets) */
+    padding: 0; /* Remove default padding */
+    margin: 0; /* Remove default margin */
+}
+
+#tableOfContents ul ul {
+    padding-left: 20px; /* Indent sub-items to the right */
+}

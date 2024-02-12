@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZFM user guide</title>
+
+    <style>
+    body {background-color: white;}
+    html {
+    font-family: Calibri, sans-serif; /* Set font type to Calibri for the entire HTML */
+    user-select: none; /* Make text non-selectable */
+    -webkit-user-select: none; /* For Safari */
+    -moz-user-select: none; /* For Firefox */
+    -ms-user-select: none; /* For Internet Explorer/Edge */
+    -webkit-touch-callout: none; /* Disable long press on mobile */
+    }
+
+        /* Additional styling for the wrapper div */
+        #contentWrapper {
+            padding: 0 20px; /* Add padding on either side */
+            font-size: 13pt;
+        }
+
+  #app {
+    width: 600px;
+    margin: 0 auto; /* Center the div horizontally */
+    overflow: hidden; /* Clear any floats inside the app div */
+}
+
+#topPanel {
+    width: 600px;
+    height: 50px; /* Adjust the height as needed */
+    background-color: rgb(255, 255, 255);
+}
+
+#topPanelLeft {
+    width: 227px;
+    height: 50px; /* Adjust the height as needed */
+    float: left;
+    background-color: rgb(255, 255, 255);
+}
+
+#topPanelRight {
+    height: 50px; /* Adjust the height as needed */
+    overflow: hidden; /* Clear any floats inside topPanelRight */
+    background-color: rgb(255, 255, 255);
+    flex: 1; /* Allow topPanelRight to expand and fill remaining space */
+    display: flex; /* Use flexbox */
+    justify-content: flex-end; /* Justify content to the right */
+    align-items: center; /* Vertically align items */
+    font-size: 11pt;
+    border-bottom: 1px solid black; /* Add thin black line at the bottom */
+}
+
+#leftPanel {
+    width: 150px;
+    height: 300px; /* Adjust the height as needed */
+    float: left;
+    background-color: rgb(255, 255, 255);
+}
+
+#rightPanel {
+    width: 450px;
+    height: 300px; /* Adjust the height as needed */
+    float: left;
+    background-color: rgb(255, 255, 255);
+}
+
+
+p {
+    clear: both; /* Ensure paragraphs appear below floated elements */
+
+}
+    
+    </style>
+</head>
+<body>
+    <div id="contentWrapper">
+        <center><h2 style="color:rgb(72, 72, 72)">Introduction</h2></center>
+        <p>The ZFM Analysis Tool is a web-based program designed to assist students in learning how to identify zero-force members 
+        in stable statically determinate truss structures. The tool employs a specific set of rules to facilitate the process of identifying and annotating 
+        zero-force members in the truss.  These rules and their underlying principles are described in Section 7 of this guide.</p>
+
+        <div id="app">
+            <div id="topPanel">
+                <div id="topPanelLeft"><img src="../images/intro4.jpg" width = "75%"></div>
+                <div id="topPanelRight">ZFM: A Learning Tool for Identifying Zero-force Members</div>
+            </div>
+            <div id="leftPanel"><img src="../images/intro2.jpg" width = "88%"></div>
+            <div id="rightPanel"><img src="../images/intro3.jpg" width = "100%"></div>
+        </div>  
+
+        <p>The app location: <a href="https://www.zeroforce.page" target="_blank">https://www.zeroforce.page</a></p>
+    </div>
+    </body>
+</html>

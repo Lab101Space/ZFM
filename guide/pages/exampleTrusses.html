@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZFM user guide</title>
+
+    <style>
+    body {background-color: white;}
+    html {
+    font-family: Calibri, sans-serif; /* Set font type to Calibri for the entire HTML */
+    user-select: none; /* Make text non-selectable */
+    -webkit-user-select: none; /* For Safari */
+    -moz-user-select: none; /* For Firefox */
+    -ms-user-select: none; /* For Internet Explorer/Edge */
+    -webkit-touch-callout: none; /* Disable long press on mobile */
+    }
+
+        /* Additional styling for the wrapper div */
+        #contentWrapper {
+            padding: 0 20px; /* Add padding on either side */
+            font-size: 13pt;
+        }
+
+
+        .table-container {
+  width: 100%; /* Adjust if you want a specific width for the container */
+  display: flex;
+  justify-content: center; /* Center the table horizontally */
+  overflow-x: auto; /* Allows scrolling if the table exceeds the viewport width */
+}
+
+table {
+  width: 500px; /* Explicitly set the table's width */
+  border-collapse: collapse;
+  border: 1px solid lightgray;
+}
+
+td, th {
+  border: 1px solid lightgray;
+  text-align: center; /* Centers content horizontally */
+  vertical-align: middle; /* Centers content vertically */
+  padding: 8px;
+}
+
+td:first-child {
+  width: 30%; /* Adjust based on your preference */
+}
+
+td:nth-child(2) {
+  width: 70%; /* This ensures the second column is wider, adjust as needed */
+}
+
+img {
+  display: block;
+  max-width: 100%; /* Ensures images are responsive and fit within their cells */
+  height: auto; /* Maintains aspect ratio */
+  margin: auto; /* Additional centering for images if needed */
+}
+
+    </style>
+</head>
+<body>
+    <div id="contentWrapper">
+        <center><h2 style="color:rgb(72, 72, 72)">Example Trusses</h2></center>
+        <p>
+            To enhance your learning experience, we've included a selection of sample trusses for you to experiment with and analyze. 
+            Choose a truss example from the dropdown menu located in the left panel. After making your selection, you have the option to modify the truss. 
+            Then, press the 'Submit' button to receive a step-by-step guide on identifying its zero-force members.
+        </p>
+        <p>The following table shows the available example trusses.</p>
+
+
+        <div class="table-container">
+            <table>
+              <tbody>
+                <!-- Repeat the row structure for each example -->
+                <tr><td>Example 1</td><td><img src="../images/exampleTruss1.jpg" alt="Truss Example 1"></td></tr>
+                <tr><td>Example 2</td><td><img src="../images/exampleTruss2.jpg" alt="Truss Example 2"></td></tr>
+                <tr><td>Example 3</td><td><img src="../images/exampleTruss3.jpg" alt="Truss Example 3"></td></tr>
+                <tr><td>Example 4</td><td><img src="../images/exampleTruss4.jpg" alt="Truss Example 4"></td></tr>
+                <tr><td>Example 5</td><td><img src="../images/exampleTruss5.jpg" alt="Truss Example 5"></td></tr>
+                <tr><td>Example 6</td><td><img src="../images/exampleTruss6.jpg" alt="Truss Example 6"></td></tr>      
+                <tr><td>Example 7</td><td><img src="../images/exampleTruss7.jpg" alt="Truss Example 7"></td></tr>
+                <tr><td>Example 8</td><td><img src="../images/exampleTruss8.jpg" alt="Truss Example 8"></td></tr>
+                <tr><td>Example 9</td><td><img src="../images/exampleTruss9.jpg" alt="Truss Example 9"></td></tr>
+                <tr><td>Example 10</td><td><img src="../images/exampleTruss10.jpg" alt="Truss Example 10"></td></tr>
+                <tr><td>Example 11</td><td><img src="../images/exampleTruss11.jpg" alt="Truss Example 11"></td></tr>
+                <tr><td>Example 12</td><td><img src="../images/exampleTruss12.jpg" alt="Truss Example 12"></td></tr>              
+                <tr><td>Example 13</td><td><img src="../images/exampleTruss13.jpg" alt="Truss Example 13"></td></tr>
+                <tr><td>Example 14</td><td><img src="../images/exampleTruss14.jpg" alt="Truss Example 14"></td></tr>      
+                <tr><td>Example 15</td><td><img src="../images/exampleTruss15.jpg" alt="Truss Example 15"></td></tr>
+                <tr><td>Example 16</td><td><img src="../images/exampleTruss16.jpg" alt="Truss Example 16"></td></tr>
+                <tr><td>Example 17</td><td><img src="../images/exampleTruss17.jpg" alt="Truss Example 17"></td></tr>
+                <tr><td>Example 18</td><td><img src="../images/exampleTruss18.jpg" alt="Truss Example 18"></td></tr>
+                <tr><td>Example 19</td><td><img src="../images/exampleTruss19.jpg" alt="Truss Example 19"></td></tr>
+                <tr><td>Example 20</td><td><img src="../images/exampleTruss20.jpg" alt="Truss Example 20"></td></tr>       
+                <!-- Repeat for example 2 to 20 -->
+              </tbody>
+            </table>
+          </div>
+          
+            
+    </div>
+    </body>
+</html>

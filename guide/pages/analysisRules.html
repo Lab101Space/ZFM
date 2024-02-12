@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZFM user guide</title>
+
+    <style>
+    body {background-color: white;}
+    html {
+    font-family: Calibri, sans-serif; /* Set font type to Calibri for the entire HTML */
+    user-select: none; /* Make text non-selectable */
+    -webkit-user-select: none; /* For Safari */
+    -moz-user-select: none; /* For Firefox */
+    -ms-user-select: none; /* For Internet Explorer/Edge */
+    -webkit-touch-callout: none; /* Disable long press on mobile */
+    }
+
+        /* Additional styling for the wrapper div */
+        #contentWrapper {
+            padding: 0 20px; /* Add padding on either side */
+            font-size: 13pt;
+        }
+ 
+ .table-container {
+    display: flex;
+    justify-content: center; /* Center the table container */
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  th:first-child, td:first-child {
+  width: 100px; /* Example fixed width; adjust as needed */
+
+}
+
+
+  table {
+    width: 650px;
+    border-collapse: collapse;
+    margin: auto; /* Center the table */
+  }
+  th, td {
+    padding: 5px;
+    border: 2px solid gray; /* Thick gray border for cells */
+  }
+  .table-title {
+    text-align: left; /* Left-justify the table title */
+    border-bottom: none; /* Optional: if you want to remove the border under the title */
+    border-left: none;
+    border-right: none;
+    border-top: none; /* Remove left, right, and top borders */
+  }
+  th:not(.table-title) {
+    text-align: right; /* Right-justify the content in the first column */
+  }
+  td {
+    text-align: left; /* Left-justify the content in the second column */
+  }
+  .no-border {
+    border-left: none;
+    border-right: none;
+    border-bottom: none; /* Remove left, right, and bottom borders */
+  }
+
+
+  .explanation-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Aligns children (divs) to the start, making text left-justified */
+  width: 650px; /* Match the table width for alignment */
+  margin-left: auto; /* Center the container */
+  margin-right: auto; /* Center the container */
+  margin-top: -30px;
+}
+
+.explanation-title {
+
+  padding-left: 5px; /* Adjust this padding to align with the 'Rule 1' text above */
+  margin-top: 20px; /* Space between the table and this new section */
+}
+
+.explanation-content {
+  display: flex; /* Enables horizontal alignment of its children */
+  width: 100%; /* Take up the full width of the parent */
+}
+
+.textExplanation {
+  width: 450px; /* Fixed width for the textExplanation div */
+  text-align: left; /* Ensure text is left-justified */
+  padding-top: 10px;
+  padding-left:10px;
+  border: 1px black;
+  padding-right: 25px;
+}
+
+.figure {
+  width: 200px;
+  display: flex;
+  justify-content: center; /* Center content horizontally */
+  align-items: center; /* Center content vertically */
+  text-align: center; /* Center text if it's the content */
+  border: 0px solid rgb(166, 166, 166);
+}
+
+
+    </style>
+</head>
+<body>
+    <div id="contentWrapper">
+        <center><h2 style="color:rgb(72, 72, 72)">The Rules for Identifying Zero-force Members</h2></center>
+        <p>
+            To enable the identification of zero-force members in a truss through qualitative analysis, rather than numerical computation, 
+            a comprehensive step-by-step explanation is essential. This approach demands the application of specific rules tailored for a qualitative, 
+            node-by-node examination of the structure. The foundation for these rules lies in the principles of equilibrium conditions, 
+            which provide the necessary justification for this analytical method. Below, we detail these rules and their rationale within the framework of equilibrium.
+        </p>
+
+        
+        <!-- Rule 0-->
+        <div class="table-container">
+            <table>
+              <tr><th class="table-title" colspan="2">Rule 0</th></tr>
+              <tr><th>Condition:</th><td>The truss is not subjected to any external loads. </td></tr>
+              <tr><th>Conclusion:</th><td>None of the truss members are subjected to any forces.</td> </tr>
+            </table>
+        </div>
+
+
+        <!-- Rule 1-->
+        <div class="table-container">
+          <table>
+            <tr><th class="table-title" colspan="2">Rule 1</th></tr>
+            <tr><th>Condition:</th><td>An unsupported and unloaded node connecting only two non-collinear truss members.</td></tr>
+            <tr><th>Conclusion:</th><td>Neither member carries any force.</td> </tr>
+          </table>
+      </div>
+      <div class="explanation-container"><div class="explanation-title">Explanation:</div>
+          <div class="explanation-content">
+            <div class="textExplanation">
+              Since the sum of the forces acting in the y-direction must be zero, the force in member A is zero. 
+              Given that the sum of the forces in the x-direction must be zero, and the force in member A is zero, the force in member B comes out to be zero as well.  
+            </div>
+            <div class="figure">
+              <center><img src="../images/Rule1.jpg" width="100%"></center>
+            </div>
+          </div>
+      </div>        
+
+        <!-- Rule 2-->
+        <div class="table-container">
+          <table>
+            <tr><th class="table-title" colspan="2">Rule 2</th></tr>
+            <tr><th>Condition:</th><td>An unsupported and unloaded node connecting only three members two of which are collinear.</td></tr>
+            <tr><th>Conclusion:</th><td>The other (third) member carries no force.</td> </tr>
+          </table>
+      </div>
+      <div class="explanation-container"><div class="explanation-title">Explanation:</div>
+          <div class="explanation-content">
+            <div class="textExplanation" style="width:450px;">
+              Since the sum of the forces acting in the y-direction must be zero, 
+              and the force in member C is the only force in the y-direction, 
+              it follows that C is a zero-force member.
+            </div>
+            <div class="figure">
+              <center><img src="../images/Rule2.jpg" width="90%"></center>
+            </div>
+          </div>
+      </div>
+
+        <!-- Rule 3-->
+        <div class="table-container">
+          <table>
+            <tr><th class="table-title" colspan="2">Rule 3</th></tr>
+            <tr><th>Condition:</th><td>An unsupported and unloaded node with a single member attached to it.  </td></tr>
+            <tr><th>Conclusion:</th><td>The member carries no force.</td> </tr>
+          </table>
+      </div>
+      <div class="explanation-container"><div class="explanation-title">Explanation:</div>
+          <div class="explanation-content">
+            <div class="textExplanation">
+              Since the sum of the forces at the node must be zero and there are no members attached to the node other than A, 
+              the force in member A is zero.
+            </div>
+            <div class="figure">
+              <center><img src="../images/Rule3.jpg" width="100%"></center>
+            </div>
+          </div>
+      </div>
+
+        <!-- Rule 4-->
+        <div class="table-container">
+          <table>
+            <tr><th class="table-title" colspan="2">Rule 4</th></tr>
+            <tr><th>Condition:</th><td>A member supported by a pin at each end.</td></tr>
+            <tr><th>Conclusion:</th><td>The member carries no force.</td> </tr>
+          </table>
+      </div>
+      <div class="explanation-container"><div class="explanation-title">Explanation:</div>
+          <div class="explanation-content">
+            <div class="textExplanation" style="width:370px;">
+              The loads applied at the end nodes of the member are entirely absorbed by the pin supports; the loads are not transmitted to the member. Therefore, the member carries no force.
+            </div>
+            <div class="figure">
+              <center><img src="../images/Rule4.jpg"></center>
+            </div>
+          </div>
+      </div>
+
+        <!-- Rule 5-->
+        <div class="table-container">
+          <table>
+            <tr><th class="table-title" colspan="2">Rule 5</th></tr>
+            <tr><th>Condition:</th><td>A node with a horizontal roller support, not subjected to a horizontal load, having a single horizontal member attached to it.</td></tr>
+            <tr><th>Conclusion:</th><td>The member carries no force.</td> </tr>
+          </table>
+      </div>
+      <div class="explanation-container"><div class="explanation-title">Explanation:</div>
+          <div class="explanation-content">
+            <div class="textExplanation">
+              Since there are no horizontal forces acting at the node other than the force in member A, the force equilibrium conditions can be maintained only if the force in member A is zero.
+            </div>
+            <div class="figure">
+              <center><img src="../images/Rule5.jpg"></center>
+            </div>
+          </div>
+      </div>
+
+        <!-- Rule 6-->
+        <div class="table-container">
+          <table>
+            <tr><th class="table-title" colspan="2">Rule 6</th></tr>
+            <tr><th>Condition:</th><td>An unloaded node having a horizontal roller support with a single member attached to it.</td></tr>
+            <tr><th>Conclusion:</th><td>The member carries no force.</td> </tr>
+          </table>
+      </div>
+      <div class="explanation-container"><div class="explanation-title">Explanation:</div>
+          <div class="explanation-content">
+            <div class="textExplanation">
+              Since the sum of forces in the x-direction must be zero, 
+              and the force in member A is the only force in that direction, 
+              then A is a zero-force member.
+            </div>
+            <div class="figure">
+              <center><img src="../images/Rule6.jpg"></center>
+            </div>
+          </div>
+      </div>
+
+        <!-- Rule 7-->
+        <div class="table-container">
+          <table>
+            <tr><th class="table-title" colspan="2">Rule 7</th></tr>
+            <tr><th>Condition:</th><td>A node with a vertical roller support, 
+              not subjected to a vertical load, 
+              having a single vertical member attached to it.</td></tr>
+            <tr><th>Conclusion:</th><td>The member carries no force.</td> </tr>
+          </table>
+      </div>
+      <div class="explanation-container"><div class="explanation-title">Explanation:</div>
+          <div class="explanation-content">
+            <div class="textExplanation">
+              Since the sum of forces in the y-direction must be zero, 
+              and the force in member A is the only force in that direction, 
+              then A is a zero-force member.           
+            </div>
+            <div class="figure">
+              <center><img src="../images/Rule7.jpg"></center>
+            </div>
+          </div>
+      </div>
+
+        <!-- Rule 8-->
+        <div class="table-container">
+          <table>
+            <tr><th class="table-title" colspan="2">Rule 8</th></tr>
+            <tr><th>Condition:</th><td>An unloaded node having a vertical roller support with a single member attached to it.</td></tr>
+            <tr><th>Conclusion:</th><td>The member carries no force.</td> </tr>
+          </table>
+      </div>
+      <div class="explanation-container"><div class="explanation-title">Explanation:</div>
+          <div class="explanation-content">
+            <div class="textExplanation">
+              Since the sum of forces in the y-direction must be zero, 
+              and the force in member A is the only force in that direction, 
+              then A is a zero-force member.         
+            </div>
+            <div class="figure">
+              <center><img src="../images/Rule8.jpg"></center>
+            </div>
+          </div>
+      </div>
+
+        <!-- Rule 9-->
+        <div class="table-container">
+          <table>
+            <tr><th class="table-title" colspan="2">Rule 9</th></tr>
+            <tr><th>Condition:</th><td>A node with a horizontal roller support and no load in the horizontal direction connects a horizontal and a vertical member.</td></tr>
+            <tr><th>Conclusion:</th><td>The horizontal member carries no force.</td> </tr>
+          </table>
+      </div>
+      <div class="explanation-container"><div class="explanation-title">Explanation:</div>
+          <div class="explanation-content">
+            <div class="textExplanation">
+              Since the sum of forces in the x-direction must be zero, 
+              and the force in member A is the only force in that direction, 
+              then A is a zero-force member.        
+            </div>
+            <div class="figure">
+              <center><img src="../images/Rule9.jpg"></center>
+            </div>
+          </div>
+      </div>
+
+
+        <!-- Rule 10-->
+        <div class="table-container">
+          <table>
+            <tr><th class="table-title" colspan="2">Rule 10</th></tr>
+            <tr><th>Condition:</th><td>A node with a vertical roller support and no load in the vertical direction connects a horizontal and a vertical member.</td></tr>
+            <tr><th>Conclusion:</th><td>The vertical member carries no force.</td> </tr>
+          </table>
+      </div>
+      <div class="explanation-container"><div class="explanation-title">Explanation:</div>
+          <div class="explanation-content">
+            <div class="textExplanation">
+              Since the sum of forces in the y-direction must be zero, 
+              and the force in member A is the only force in that direction, 
+              then A is a zero-force member.    
+            </div>
+            <div class="figure">
+              <center><img src="../images/Rule10.jpg"></center>
+            </div>
+          </div>
+      </div>
+
+
+
+        <!-- Rule 11-->
+        <div class="table-container">
+          <table>
+            <tr><th class="table-title" colspan="2">Rule 11</th></tr>
+            <tr><th>Condition:</th><td>An unsupported node, with a load in the horizontal direction, 
+              connects a horizontal and a non-horizontal member.</td></tr>
+            <tr><th>Conclusion:</th><td>The non-horizontal member carries no force.</td> </tr>
+          </table>
+      </div>
+      <div class="explanation-container"><div class="explanation-title">Explanation:</div>
+          <div class="explanation-content">
+            <div class="textExplanation">
+              Since the sum of forces in the y-direction must be zero, 
+              and the force in member A is the only force in that direction, 
+              then A is a zero-force member.
+            </div>
+            <div class="figure">
+              <center><img src="../images/Rule11.jpg"></center>
+            </div>
+          </div>
+      </div>
+
+
+
+        <!-- Rule 12-->
+        <div class="table-container">
+          <table>
+            <tr><th class="table-title" colspan="2">Rule 12</th></tr>
+            <tr><th>Condition:</th><td>An unsupported node, with a load in the vertical direction, 
+              connects a vertical and a non-vertical member.</td></tr>
+            <tr><th>Conclusion:</th><td>The non-vertical member carries no force.</td> </tr>
+          </table>
+      </div>
+      <div class="explanation-container"><div class="explanation-title">Explanation:</div>
+          <div class="explanation-content">
+            <div class="textExplanation">
+              Since the sum of forces in the x-direction must be zero, 
+              and the force in member A is the only force in that direction, 
+              then A is a zero-force member.
+            </div>
+            <div class="figure">
+              <center><img src="../images/Rule12.jpg"></center>
+            </div>
+          </div>
+      </div>
+
+
+        <!-- Rule 13-->
+        <div class="table-container">
+          <table>
+            <tr><th class="table-title" colspan="2">Rule 13</th></tr>
+            <tr><th>Condition:</th><td>
+              A series of members aligned in a straight line.<br>
+
+              (1) The series is enclosed by a pin connection at both ends. Or,<br>
+              (2) The series consists of horizontal members, with a pin connection at one end and a vertical roller at the other. Or,<br>
+              (3) The series consists of vertical members, with a pin connection at one end and a horizontal roller at the other.
+            </td></tr>
+            <tr><th>Conclusion:</th><td>None of the members in the series experiences any axial force.</td> </tr>
+          </table>
+      </div>
+      <div class="explanation-container"><div class="explanation-title">Explanation:</div>
+          <div class="explanation-content">
+            <div class="textExplanation">
+              Any existing load or force at the ends of the chain are absorbed by the supports, hence, the chain members remain force-free.
+            </div>
+            <div class="figure">
+              <center><img src="../images/Rule13.jpg" ></center>
+            </div>
+          </div>
+      </div>
+
+
+        <!-- Rule 14-->
+        <div class="table-container">
+          <table>
+            <tr><th class="table-title" colspan="2">Rule 14</th></tr>
+            <tr><th>Condition:</th><td>
+              Two non-collinear truss members are connected to a node that is supported by a vertical roller. 
+              This node does not have any other members attached to it nor does it bear any vertical loads. 
+              Furthermore, each of these members is connected to a pin support at its opposite end.
+            </td></tr>
+            <tr><th>Conclusion:</th><td>Neither member carries any axial force.</td> </tr>
+          </table>
+      </div>
+      <div class="explanation-container"><div class="explanation-title">Explanation:</div>
+          <div class="explanation-content">
+            <div class="textExplanation">
+              A vertical force cannot be present at the roller support, 
+              otherwise the substructure becomes unstable as it can undego rigid-body movement in the vertical direction at the roller.
+              Any other forces applied at the ends of the two members are absorbed by the supports, hence, the members remain force-free.
+            </div>
+            <div class="figure">
+              <center><img src="../images/Rule14.jpg"></center>
+            </div>
+          </div>
+      </div>
+
+
+        <!-- Rule 15-->
+        <div class="table-container">
+          <table>
+            <tr><th class="table-title" colspan="2">Rule 15</th></tr>
+            <tr><th>Condition:</th><td>
+              Two non-collinear truss members are connected to a node that is supported by a horizontal roller. 
+              This node does not have any other members attached to it nor does it bear any horizontal loads. 
+              Furthermore, each of these members is connected to a pin support at its opposite end.
+            </td></tr>
+            <tr><th>Conclusion:</th><td>Neither member carries any axial force.</td> </tr>
+          </table>
+      </div>
+      <div class="explanation-container"><div class="explanation-title">Explanation:</div>
+          <div class="explanation-content">
+            <div class="textExplanation">
+              A horizontal force cannot be present at the roller support, 
+              otherwise the substructure becomes unstable as it can undego rigid-body movement in the horizontal direction at the roller.
+              Any other forces applied at the ends of the two members are absorbed by the supports, hence, the members remain force-free.
+            </div>
+            <div class="figure">
+              <center><img src="../images/Rule15.jpg"></center>
+            </div>
+          </div>
+      </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZFM user guide</title>
+
+    <style>
+    body {background-color: white;}
+    html {
+    font-family: Calibri, sans-serif; /* Set font type to Calibri for the entire HTML */
+    user-select: none; /* Make text non-selectable */
+    -webkit-user-select: none; /* For Safari */
+    -moz-user-select: none; /* For Firefox */
+    -ms-user-select: none; /* For Internet Explorer/Edge */
+    -webkit-touch-callout: none; /* Disable long press on mobile */
+    }
+
+        /* Additional styling for the wrapper div */
+        #contentWrapper {
+            padding: 0 20px; /* Add padding on either side */
+            font-size: 13pt;
+        }
+
+        #appMenu {
+    width: 700px;
+    display: flex; /* Use flexbox */
+}
+
+#leftPanel {
+    flex: 1; /* Take up remaining space */
+}
+
+#rightPanel {
+    width: 210px;
+    display: flex; /* Use flexbox */
+    justify-content: center; /* Center content horizontally */
+}
+
+.inline-image {
+    vertical-align: middle; /* Align the image vertically with the text */
+}
+       
+    
+    </style>
+</head>
+<body>
+    <div id="contentWrapper">
+        <center><h2 style="color:rgb(72, 72, 72)">Truss Construction Tools</h2></center>
+        <p>The app's menu offers a set of buttons for creating trusses including:</p>
+
+            <div id="appMenu">
+                <div id="leftPanel">
+                    <ul>
+                        <li><b>Node</b>: Click to create a new node on the canvas.</li><br>
+                        <li><b>Member</b>: Use this to connect two nodes and create a member.</li><br>
+                        <li><b>Support</b>: This button adds support to your truss. Three types of supports can be defined: pin support (<img src="../images/pin.jpg" alt="Small Image" class="inline-image">), horizontal roller (<img src="../images/rollerX.jpg" alt="Small Image" class="inline-image">), and vertical roller (<img src="../images/rollerY.jpg" alt="Small Image" class="inline-image">). Use the dropdown menu to select the support type.</li><br>
+                        <li><b>Load</b>: Places point loads at one or more nodes. Short red lines represent loads. A load can be placed horizontally (<img src="../images/loadX.jpg" alt="Small Image" class="inline-image">) or vertically (<img src="../images/loadY.jpg" alt="Small Image" class="inline-image">) at the node. Use the dropdown menu to select the load direction.</li><br>
+                        <li><b>Delete</b>: Removes selected nodes, members, supports, or loads from the structure.</li>
+                    </ul>
+                </div>
+                <div id="rightPanel">
+                    <img src="../images/intro2.jpg">
+                </div>
+            </div>            
+
+
+            
+    </div>
+    </body>
+</html>
